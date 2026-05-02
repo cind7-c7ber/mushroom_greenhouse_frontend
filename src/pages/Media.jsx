@@ -7,8 +7,10 @@ function ImageCard({ item }) {
 
   const ts = item.capture_timestamp
     ? new Date(item.capture_timestamp).toLocaleString('en-GB', {
-        day: 'numeric', month: 'short',
-        hour: '2-digit', minute: '2-digit',
+        day: 'numeric',
+        month: 'short',
+        hour: '2-digit',
+        minute: '2-digit',
       })
     : '—'
 
@@ -27,12 +29,13 @@ function ImageCard({ item }) {
             />
           </>
         ) : (
-          <div className="h-full flex items-center justify-center">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="text-tx-muted opacity-30">
-              <rect x="3" y="6" width="26" height="20" rx="3" stroke="currentColor" strokeWidth="1.5"/>
-              <circle cx="11" cy="13" r="3" stroke="currentColor" strokeWidth="1.5"/>
-              <path d="M3.5 26L10 18.5L15 23L21 17L28.5 26" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+          <div className="h-full flex items-center justify-center px-4 text-center">
+            <div>
+              <p className="text-xs text-tx-muted">No preview available</p>
+              {item.storage_path && (
+                <p className="text-[10px] font-mono text-tx-muted mt-2 break-all">{item.storage_path}</p>
+              )}
+            </div>
           </div>
         )}
       </div>
@@ -56,12 +59,11 @@ export default function Media() {
 
   return (
     <div className="page-content space-y-6">
-      {/* Stream status */}
       <div className="surface p-5">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h3 className="section-heading">Camera Stream</h3>
-            <p className="text-xs text-tx-muted mt-0.5">Live camera feed via MQTT-reported URL</p>
+            <p className="text-xs text-tx-muted mt-0.5">Live MJPEG stream from the greenhouse camera</p>
           </div>
           <span className={`flex items-center gap-2 text-xs font-medium ${streamUrl ? 'text-online' : 'text-tx-muted'}`}>
             <span className={`status-dot ${streamUrl ? 'bg-online animate-pulse' : 'bg-bg-border'}`} />
@@ -88,13 +90,12 @@ export default function Media() {
           <div className="py-6 text-center border border-dashed border-bg-border rounded-lg">
             <p className="text-sm text-tx-muted">No stream URL received yet</p>
             <p className="text-xs text-tx-muted mt-1 opacity-60">
-              The stream URL is delivered via MQTT payload from the Raspberry Pi camera
+              The stream will appear when the backend has an active camera stream source.
             </p>
           </div>
         )}
       </div>
 
-      {/* Latest image */}
       {latest && (
         <div>
           <p className="label-caps mb-3">Latest Image</p>
@@ -106,23 +107,28 @@ export default function Media() {
                     src={latest.image_url}
                     alt={latest.image_filename ?? 'Latest'}
                     className="w-full h-full object-cover"
-                    onError={e => { e.currentTarget.style.display = 'none' }}
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none'
+                    }}
                   />
                 ) : (
-                  <div className="h-full flex items-center justify-center text-tx-muted text-xs">
-                    No image available
+                  <div className="h-full flex items-center justify-center text-tx-muted text-xs px-4 text-center">
+                    {latest.storage_path ? `Stored path: ${latest.storage_path}` : 'No image available'}
                   </div>
                 )}
               </div>
+
               <div className="space-y-3">
                 {[
-                  ['Filename',  latest.image_filename ?? '—'],
-                  ['Section',   latest.section ?? '—'],
-                  ['Captured',  latest.capture_timestamp
-                    ? new Date(latest.capture_timestamp).toLocaleString('en-GB')
-                    : '—'],
-                  ['Status',    latest.upload_status ?? '—'],
-                  ['Notes',     latest.notes ?? '—'],
+                  ['Filename', latest.image_filename ?? '—'],
+                  ['Section', latest.section ?? '—'],
+                  [
+                    'Captured',
+                    latest.capture_timestamp ? new Date(latest.capture_timestamp).toLocaleString('en-GB') : '—',
+                  ],
+                  ['Upload Status', latest.upload_status ?? '—'],
+                  ['Storage Path', latest.storage_path ?? '—'],
+                  ['Notes', latest.notes ?? '—'],
                 ].map(([key, val]) => (
                   <div key={key} className="flex justify-between py-2 border-b border-bg-border last:border-0">
                     <span className="label-caps text-[10px]">{key}</span>
@@ -135,7 +141,6 @@ export default function Media() {
         </div>
       )}
 
-      {/* Image history */}
       <div>
         <div className="flex items-center justify-between mb-3">
           <p className="label-caps">Image History</p>
@@ -150,7 +155,9 @@ export default function Media() {
           </div>
         ) : history.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-            {history.map((item, i) => <ImageCard key={item.id ?? i} item={item} />)}
+            {history.map((item, i) => (
+              <ImageCard key={item.id ?? i} item={item} />
+            ))}
           </div>
         ) : (
           <div className="py-10 text-center border border-dashed border-bg-border rounded-lg">

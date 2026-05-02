@@ -1,67 +1,110 @@
-import { createContext, useContext, useState, useCallback } from 'react'
-
-// ─── Mock auth — wire these functions to your FastAPI auth endpoints later ───
-// Admin credentials (demo only):  admin@greenhouse.ac / admin123
-const ADMIN_EMAIL    = 'admin@greenhouse.ac'
-const ADMIN_PASSWORD = 'admin123'
-const USERS_KEY      = 'gh_users'
-const SESSION_KEY    = 'gh_session'
-
-function loadUsers() {
-  try { return JSON.parse(localStorage.getItem(USERS_KEY)) || [] } catch { return [] }
-}
-function saveUsers(users) {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users))
-}
-function loadSession() {
-  try { return JSON.parse(localStorage.getItem(SESSION_KEY)) || null } catch { return null }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
+import { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react'
+import { getCurrentUser, loginUser, registerUser } from '../api/auth'
 
 const AuthContext = createContext(null)
 
+const TOKEN_KEY = 'gh_token'
+const USER_KEY = 'gh_user'
+
+function loadStoredUser() {
+  try {
+    return JSON.parse(localStorage.getItem(USER_KEY)) || null
+  } catch {
+    return null
+  }
+}
+
+function loadStoredToken() {
+  return localStorage.getItem(TOKEN_KEY) || null
+}
+
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => loadSession())
+  const [user, setUser] = useState(() => loadStoredUser())
+  const [token, setToken] = useState(() => loadStoredToken())
+  const [loading, setLoading] = useState(true)
 
-  const login = useCallback(async (email, password) => {
-    const users = loadUsers()
-    const found = users.find(u => u.email === email && u.password === password)
-    if (!found) throw new Error('Invalid email or password.')
-    const session = { id: found.id, name: found.name, email: found.email, role: found.role }
-    localStorage.setItem(SESSION_KEY, JSON.stringify(session))
-    setUser(session)
-    return session
+  const persistSession = useCallback((nextToken, nextUser) => {
+    localStorage.setItem(TOKEN_KEY, nextToken)
+    localStorage.setItem(USER_KEY, JSON.stringify(nextUser))
+    setToken(nextToken)
+    setUser(nextUser)
   }, [])
 
-  const signup = useCallback(async (name, email, password) => {
-    const users = loadUsers()
-    if (users.find(u => u.email === email)) throw new Error('An account with this email already exists.')
-    const newUser = { id: Date.now().toString(), name, email, password, role: 'user' }
-    saveUsers([...users, newUser])
-    const session = { id: newUser.id, name, email, role: 'user' }
-    localStorage.setItem(SESSION_KEY, JSON.stringify(session))
-    setUser(session)
-    return session
-  }, [])
-
-  const adminLogin = useCallback(async (email, password) => {
-    if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
-      throw new Error('Invalid admin credentials.')
-    }
-    const session = { id: 'admin-0', name: 'Administrator', email, role: 'admin' }
-    localStorage.setItem(SESSION_KEY, JSON.stringify(session))
-    setUser(session)
-    return session
-  }, [])
-
-  const logout = useCallback(() => {
-    localStorage.removeItem(SESSION_KEY)
+  const clearSession = useCallback(() => {
+    localStorage.removeItem(TOKEN_KEY)
+    localStorage.removeItem(USER_KEY)
+    setToken(null)
     setUser(null)
   }, [])
 
+  useEffect(() => {
+    async function restoreSession() {
+      if (!token) {
+        setLoading(false)
+        return
+      }
+
+      try {
+        const currentUser = await getCurrentUser()
+        localStorage.setItem(USER_KEY, JSON.stringify(currentUser))
+        setUser(currentUser)
+      } catch (error) {
+        clearSession()
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    restoreSession()
+  }, [token, clearSession])
+
+  const login = useCallback(async (username, password) => {
+    const authResult = await loginUser({ username, password })
+    const nextToken = authResult.access_token
+
+    localStorage.setItem(TOKEN_KEY, nextToken)
+    setToken(nextToken)
+
+    const currentUser = await getCurrentUser()
+    persistSession(nextToken, currentUser)
+
+    return currentUser
+  }, [persistSession])
+
+  const signup = useCallback(async ({ username, email, password, role = 'user' }) => {
+    await registerUser({ username, email, password, role })
+    return login(username, password)
+  }, [login])
+
+  const adminLogin = useCallback(async (username, password) => {
+    const currentUser = await login(username, password)
+
+    if (currentUser.role !== 'admin') {
+      clearSession()
+      throw new Error('Admin access required.')
+    }
+
+    return currentUser
+  }, [login, clearSession])
+
+  const logout = useCallback(() => {
+    clearSession()
+  }, [clearSession])
+
+  const value = useMemo(() => ({
+    user,
+    token,
+    loading,
+    login,
+    signup,
+    adminLogin,
+    logout,
+    isAuthenticated: !!token,
+    isAdmin: user?.role === 'admin',
+  }), [user, token, loading, login, signup, adminLogin, logout])
+
   return (
-    <AuthContext.Provider value={{ user, login, signup, adminLogin, logout, isAdmin: user?.role === 'admin' }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   )
