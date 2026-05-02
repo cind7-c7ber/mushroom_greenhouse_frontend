@@ -1,10 +1,10 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect, useRef } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { ThemeProvider } from './context/ThemeContext'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { SettingsProvider } from './context/SettingsContext'
 import { DataProvider } from './context/DataContext'
-import { ToastProvider } from './context/ToastContext'
+import { ToastProvider, useToast } from './context/ToastContext'
 import ErrorBoundary from './components/ErrorBoundary'
 import ToastContainer from './components/Toast'
 import AppShell from './components/layout/AppShell'
@@ -35,6 +35,30 @@ function PageLoader() {
   )
 }
 
+function AuthEventBridge() {
+  const { user } = useAuth()
+  const { addToast } = useToast()
+  const hadUserRef = useRef(false)
+
+  useEffect(() => {
+    if (user) {
+      hadUserRef.current = true
+      return
+    }
+
+    if (!user && hadUserRef.current) {
+      addToast({
+        message: 'Session expired. Please sign in again.',
+        type: 'danger',
+        duration: 5000,
+      })
+      hadUserRef.current = false
+    }
+  }, [user, addToast])
+
+  return null
+}
+
 function RequireAuth({ children }) {
   const { user, loading } = useAuth()
   const location = useLocation()
@@ -47,7 +71,20 @@ function RequireAuth({ children }) {
 
 function RequireAdmin({ children }) {
   const { user, loading } = useAuth()
+  const { addToast } = useToast()
   const location = useLocation()
+  const warnedRef = useRef(false)
+
+  useEffect(() => {
+    if (!loading && user && user.role !== 'admin' && !warnedRef.current) {
+      addToast({
+        message: 'Administrator access required.',
+        type: 'danger',
+        duration: 4000,
+      })
+      warnedRef.current = true
+    }
+  }, [loading, user, addToast])
 
   if (loading) return <PageLoader />
   if (!user) return <Navigate to="/admin-login" state={{ from: location }} replace />
@@ -162,20 +199,29 @@ function AppRoutes() {
   )
 }
 
+function AppInner() {
+  return (
+    <>
+      <AuthEventBridge />
+      <BrowserRouter>
+        <AppRoutes />
+        <ToastContainer />
+      </BrowserRouter>
+    </>
+  )
+}
+
 export default function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider>
         <AuthProvider>
           <SettingsProvider>
-            <DataProvider>
-              <ToastProvider>
-                <BrowserRouter>
-                  <AppRoutes />
-                  <ToastContainer />
-                </BrowserRouter>
-              </ToastProvider>
-            </DataProvider>
+            <ToastProvider>
+              <DataProvider>
+                <AppInner />
+              </DataProvider>
+            </ToastProvider>
           </SettingsProvider>
         </AuthProvider>
       </ThemeProvider>

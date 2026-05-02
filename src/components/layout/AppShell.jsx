@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import Sidebar from './Sidebar'
 import { useData } from '../../context/DataContext'
-import { useSettings } from '../../context/SettingsContext'
 import { useAuth } from '../../context/AuthContext'
 
 const PAGE_META = {
@@ -27,8 +26,8 @@ const PAGE_META = {
     refreshLabel: null,
   },
   '/admin': {
-    title: 'System',
-    subtitle: 'Backend connection, sync health, and system administration',
+    title: 'Administration Console',
+    subtitle: 'Protected system oversight, sync health, and backend operations review',
     refreshLabel: null,
   },
 }
@@ -37,10 +36,10 @@ export default function AppShell() {
   const location = useLocation()
   const { lastUpdated, syncHealth } = useData()
   const { user, logout } = useAuth()
-  const { settings } = useSettings()
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const meta = PAGE_META[location.pathname] ?? PAGE_META['/']
+  const isAdminPage = location.pathname.startsWith('/admin')
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--c-bg-base)' }}>
@@ -70,13 +69,18 @@ export default function AppShell() {
             position: 'sticky',
             top: 0,
             zIndex: 10,
-            background: 'var(--c-bg-base)',
-            borderBottom: '1px solid var(--c-bg-border)',
+            background: isAdminPage
+              ? 'linear-gradient(180deg, rgba(165,124,201,0.14), rgba(165,124,201,0.03))'
+              : 'var(--c-bg-base)',
+            borderBottom: isAdminPage
+              ? '1px solid rgba(165,124,201,0.22)'
+              : '1px solid var(--c-bg-border)',
             padding: '14px 24px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             backdropFilter: 'blur(8px)',
+            boxShadow: isAdminPage ? '0 6px 20px rgba(0,0,0,0.08)' : 'none',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -99,18 +103,36 @@ export default function AppShell() {
             </button>
 
             <div>
+              {isAdminPage && (
+                <p
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 700,
+                    letterSpacing: '0.12em',
+                    textTransform: 'uppercase',
+                    color: '#A57CC9',
+                    marginBottom: 4,
+                  }}
+                >
+                  Protected administrative workspace
+                </p>
+              )}
+
               <h1
                 style={{
-                  fontSize: 15,
-                  fontWeight: 600,
+                  fontSize: isAdminPage ? 18 : 15,
+                  fontWeight: 700,
                   color: 'var(--c-tx-primary)',
                   letterSpacing: '-0.01em',
-                  lineHeight: 1.3,
+                  lineHeight: 1.25,
                 }}
               >
                 {meta.title}
               </h1>
-              <p style={{ fontSize: 11, color: 'var(--c-tx-muted)', marginTop: 2 }}>{meta.subtitle}</p>
+
+              <p style={{ fontSize: 11, color: 'var(--c-tx-muted)', marginTop: 2 }}>
+                {meta.subtitle}
+              </p>
             </div>
           </div>
 
@@ -174,8 +196,18 @@ export default function AppShell() {
             {user && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <div style={{ textAlign: 'right' }}>
-                  <p style={{ fontSize: 11, color: 'var(--c-tx-primary)', fontWeight: 500 }}>{user.username}</p>
-                  <p style={{ fontSize: 10, color: 'var(--c-tx-muted)', textTransform: 'uppercase' }}>{user.role}</p>
+                  <p style={{ fontSize: 11, color: 'var(--c-tx-primary)', fontWeight: 500 }}>
+                    {user.username}
+                  </p>
+                  <p
+                    style={{
+                      fontSize: 10,
+                      color: isAdminPage ? '#A57CC9' : 'var(--c-tx-muted)',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {user.role}
+                  </p>
                 </div>
                 <button
                   onClick={logout}
@@ -196,7 +228,9 @@ export default function AppShell() {
         <footer
           style={{
             padding: '10px 24px',
-            borderTop: '1px solid var(--c-bg-border)',
+            borderTop: isAdminPage
+              ? '1px solid rgba(165,124,201,0.18)'
+              : '1px solid var(--c-bg-border)',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -205,7 +239,9 @@ export default function AppShell() {
           <span style={{ fontSize: 11, color: 'var(--c-tx-muted)' }}>
             Intelligent Oyster Mushroom Greenhouse Monitoring System
           </span>
-          <span style={{ fontSize: 11, color: 'var(--c-tx-muted)' }}>ACITY · Thesis Project</span>
+          <span style={{ fontSize: 11, color: isAdminPage ? '#A57CC9' : 'var(--c-tx-muted)' }}>
+            ACITY · Thesis Project
+          </span>
         </footer>
       </div>
 

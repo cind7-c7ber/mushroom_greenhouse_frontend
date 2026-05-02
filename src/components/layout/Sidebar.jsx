@@ -74,8 +74,8 @@ const ADMIN_ONLY_NAV = [
   {
     path: '/admin',
     exact: false,
-    label: 'System',
-    description: 'Admin tools',
+    label: 'Admin Console',
+    description: 'Protected system workspace',
     icon: (
       <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
         <rect x="1" y="3" width="13" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
@@ -141,10 +141,10 @@ export default function Sidebar({ mobileOpen, onClose }) {
   const navigate = useNavigate()
 
   const stage = STAGES[settings.growthStage]
-  const navItems = isAdmin ? [...USER_NAV, ...ADMIN_ONLY_NAV] : USER_NAV
-
+  const navItems = isAdmin ? ADMIN_ONLY_NAV : USER_NAV
   const backendOnline = syncHealth?.status === 'healthy'
   const greenhouseOnline = status?.status_value === 'ONLINE'
+  const isAdminPage = location.pathname.startsWith('/admin')
 
   function isActive(path, exact) {
     return exact ? location.pathname === path : location.pathname.startsWith(path)
@@ -165,36 +165,40 @@ export default function Sidebar({ mobileOpen, onClose }) {
         width: 216,
         display: 'flex',
         flexDirection: 'column',
-        background: 'var(--c-bg-surface)',
-        borderRight: '1px solid var(--c-bg-border)',
+        background: isAdminPage
+          ? 'linear-gradient(180deg, rgba(35,27,47,0.98), rgba(25,20,36,0.98))'
+          : 'var(--c-bg-surface)',
+        borderRight: isAdminPage
+          ? '1px solid rgba(165,124,201,0.18)'
+          : '1px solid var(--c-bg-border)',
         zIndex: 40,
         transform: mobileOpen ? 'translateX(0)' : undefined,
         transition: 'transform 0.25s ease',
       }}
       className={`sidebar-root ${mobileOpen ? 'sidebar-mobile-open' : ''}`}
     >
-      <div style={{ padding: '20px 20px 16px', borderBottom: '1px solid var(--c-bg-border)' }}>
+      <div style={{ padding: '20px 20px 16px', borderBottom: isAdminPage ? '1px solid rgba(165,124,201,0.16)' : '1px solid var(--c-bg-border)' }}>
         <p
           style={{
             fontSize: 11,
             fontWeight: 700,
             letterSpacing: '0.12em',
             textTransform: 'uppercase',
-            color: 'var(--c-accent)',
+            color: isAdminPage ? '#A57CC9' : 'var(--c-accent)',
             marginBottom: 2,
           }}
         >
-          ACADEMIC CITY
+          {isAdminPage ? 'Admin access' : 'Academic city'}
         </p>
-        <p style={{ fontSize: 12, color: 'var(--c-tx-primary)', fontWeight: 600, lineHeight: 1.3 }}>
-          Greenhouse Monitor
+        <p style={{ fontSize: 12, color: 'var(--c-tx-primary)', fontWeight: 700, lineHeight: 1.3 }}>
+          {isAdminPage ? 'System Console' : 'Greenhouse Monitor'}
         </p>
         <p style={{ fontSize: 11, color: 'var(--c-tx-muted)', marginTop: 2 }}>
-          Oyster Mushroom System
+          {isAdminPage ? 'Protected operations workspace' : 'Oyster Mushroom System'}
         </p>
       </div>
 
-      <div style={{ padding: '12px 20px', borderBottom: '1px solid var(--c-bg-border)' }}>
+      <div style={{ padding: '12px 20px', borderBottom: isAdminPage ? '1px solid rgba(165,124,201,0.14)' : '1px solid var(--c-bg-border)' }}>
         <p
           style={{
             fontSize: 10,
@@ -215,8 +219,8 @@ export default function Sidebar({ mobileOpen, onClose }) {
               gap: 8,
               padding: '6px 10px',
               borderRadius: 8,
-              background: 'var(--c-accent-dim)',
-              border: '1px solid var(--c-accent-border)',
+              background: isAdminPage ? 'rgba(165,124,201,0.10)' : 'var(--c-accent-dim)',
+              border: isAdminPage ? '1px solid rgba(165,124,201,0.20)' : '1px solid var(--c-accent-border)',
               cursor: 'pointer',
             }}
           >
@@ -225,7 +229,7 @@ export default function Sidebar({ mobileOpen, onClose }) {
                 width: 6,
                 height: 6,
                 borderRadius: '50%',
-                background: 'var(--c-accent)',
+                background: isAdminPage ? '#A57CC9' : 'var(--c-accent)',
                 flexShrink: 0,
               }}
             />
@@ -242,12 +246,16 @@ export default function Sidebar({ mobileOpen, onClose }) {
       </div>
 
       <nav style={{ flex: 1, padding: '12px 12px', overflowY: 'auto' }}>
-        <p className="label-caps" style={{ padding: '0 8px', marginBottom: 8 }}>
-          Navigation
+        <p
+          className="label-caps"
+          style={{ padding: '0 8px', marginBottom: 8, color: isAdminPage ? '#A57CC9' : undefined }}
+        >
+          {isAdminPage ? 'Operator Navigation' : 'Navigation'}
         </p>
 
         {navItems.map(({ path, exact, label, icon, description }) => {
           const active = isActive(path, exact)
+          const isAdminItem = path === '/admin'
 
           return (
             <NavLink
@@ -255,9 +263,23 @@ export default function Sidebar({ mobileOpen, onClose }) {
               to={path}
               onClick={onClose}
               className={`nav-item ${active ? 'nav-item-active' : ''}`}
-              style={{ marginBottom: 2, textDecoration: 'none' }}
+              style={{
+                marginBottom: 4,
+                textDecoration: 'none',
+                border: isAdminItem ? '1px solid rgba(165,124,201,0.18)' : undefined,
+                background: active && isAdminItem ? 'rgba(165,124,201,0.12)' : undefined,
+              }}
             >
-              <span style={{ color: active ? 'var(--c-accent)' : 'var(--c-tx-muted)', flexShrink: 0 }}>
+              <span
+                style={{
+                  color: active
+                    ? isAdminItem
+                      ? '#A57CC9'
+                      : 'var(--c-accent)'
+                    : 'var(--c-tx-muted)',
+                  flexShrink: 0,
+                }}
+              >
                 {icon}
               </span>
               <div style={{ minWidth: 0 }}>
@@ -267,13 +289,46 @@ export default function Sidebar({ mobileOpen, onClose }) {
             </NavLink>
           )
         })}
+
+        {isAdmin && (
+          <div
+            style={{
+              marginTop: 14,
+              padding: '10px 10px 0',
+              borderTop: '1px solid rgba(165,124,201,0.14)',
+            }}
+          >
+            <p
+              className="label-caps"
+              style={{ marginBottom: 8, color: '#A57CC9' }}
+            >
+              Administrative scope
+            </p>
+            <div
+              style={{
+                border: '1px solid rgba(165,124,201,0.18)',
+                background: 'rgba(165,124,201,0.06)',
+                borderRadius: 10,
+                padding: '10px 12px',
+              }}
+            >
+              <p style={{ fontSize: 12, color: 'var(--c-tx-primary)', fontWeight: 600 }}>
+                Restricted backend oversight
+              </p>
+              <p style={{ fontSize: 11, color: 'var(--c-tx-muted)', marginTop: 4, lineHeight: 1.35 }}>
+                Review telemetry source health, active alert pressure, backend connectivity,
+                and latest system status from the protected admin console.
+              </p>
+            </div>
+          </div>
+        )}
       </nav>
 
-      <div style={{ borderTop: '1px solid var(--c-bg-border)', padding: '8px 12px' }}>
+      <div style={{ borderTop: isAdminPage ? '1px solid rgba(165,124,201,0.14)' : '1px solid var(--c-bg-border)', padding: '8px 12px' }}>
         <ThemeToggle />
       </div>
 
-      <div style={{ borderTop: '1px solid var(--c-bg-border)', padding: '12px 16px' }}>
+      <div style={{ borderTop: isAdminPage ? '1px solid rgba(165,124,201,0.14)' : '1px solid var(--c-bg-border)', padding: '12px 16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
             <span
@@ -287,7 +342,7 @@ export default function Sidebar({ mobileOpen, onClose }) {
               {backendOnline ? 'SYNC HEALTHY' : 'SYNC DEGRADED'}
             </span>
           </div>
-          <span className="label-caps" style={{ fontSize: 9 }}>
+          <span className="label-caps" style={{ fontSize: 9, color: isAdminPage ? '#A57CC9' : undefined }}>
             HTTP
           </span>
         </div>
@@ -322,7 +377,7 @@ export default function Sidebar({ mobileOpen, onClose }) {
             <p
               style={{
                 fontSize: 10,
-                color: 'var(--c-tx-muted)',
+                color: isAdminPage ? '#A57CC9' : 'var(--c-tx-muted)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.08em',
               }}

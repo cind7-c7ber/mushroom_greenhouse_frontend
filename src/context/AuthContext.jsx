@@ -48,7 +48,7 @@ export function AuthProvider({ children }) {
         const currentUser = await getCurrentUser()
         localStorage.setItem(USER_KEY, JSON.stringify(currentUser))
         setUser(currentUser)
-      } catch (error) {
+      } catch {
         clearSession()
       } finally {
         setLoading(false)
@@ -57,6 +57,15 @@ export function AuthProvider({ children }) {
 
     restoreSession()
   }, [token, clearSession])
+
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      clearSession()
+    }
+
+    window.addEventListener('gh:unauthorized', handleUnauthorized)
+    return () => window.removeEventListener('gh:unauthorized', handleUnauthorized)
+  }, [clearSession])
 
   const login = useCallback(async (username, password) => {
     const authResult = await loginUser({ username, password })

@@ -4,6 +4,7 @@ import { getLatestImage, getImageHistory } from '../api/images'
 import { getLatestStatus } from '../api/status'
 import { getAlertSummary, getActiveAlerts } from '../api/alerts'
 import { getSyncHealth } from '../api/sync'
+import { useAuth } from './AuthContext'
 
 const DataContext = createContext(null)
 export const useData = () => useContext(DataContext)
@@ -18,6 +19,8 @@ const INTERVALS = {
 }
 
 export function DataProvider({ children }) {
+  const { isAuthenticated, loading: authLoading } = useAuth()
+
   const [controlled, setControlled] = useState(null)
   const [control, setControl] = useState(null)
   const [historyControlled, setHistoryControlled] = useState([])
@@ -44,6 +47,17 @@ export function DataProvider({ children }) {
     alerts: false,
     syncHealth: false,
   })
+
+  const resetLoadedFlags = useCallback(() => {
+    loadedRef.current = {
+      latest: false,
+      history: false,
+      image: false,
+      status: false,
+      alerts: false,
+      syncHealth: false,
+    }
+  }, [])
 
   const markLoaded = useCallback(() => {
     const r = loadedRef.current
@@ -154,40 +168,64 @@ export function DataProvider({ children }) {
   }, [markLoaded])
 
   useEffect(() => {
+    if (authLoading) return
+
+    if (!isAuthenticated) {
+      setControlled(null)
+      setControl(null)
+      setHistoryControlled([])
+      setHistoryControl([])
+      setImageData(null)
+      setImageHistory([])
+      setStatus(null)
+      setAlertSummary(null)
+      setActiveAlerts([])
+      setSyncHealth(null)
+      setLastUpdated(null)
+      setError(null)
+      setPrevControlled(null)
+      setPrevControl(null)
+      setLoading(false)
+      resetLoadedFlags()
+      return
+    }
+
+    setLoading(true)
+    resetLoadedFlags()
+
     fetchLatest()
-    const id = setInterval(fetchLatest, INTERVALS.latest)
-    return () => clearInterval(id)
-  }, [fetchLatest])
-
-  useEffect(() => {
     fetchHistory()
-    const id = setInterval(fetchHistory, INTERVALS.history)
-    return () => clearInterval(id)
-  }, [fetchHistory])
-
-  useEffect(() => {
     fetchImages()
-    const id = setInterval(fetchImages, INTERVALS.image)
-    return () => clearInterval(id)
-  }, [fetchImages])
-
-  useEffect(() => {
     fetchStatus()
-    const id = setInterval(fetchStatus, INTERVALS.status)
-    return () => clearInterval(id)
-  }, [fetchStatus])
-
-  useEffect(() => {
     fetchAlerts()
-    const id = setInterval(fetchAlerts, INTERVALS.alerts)
-    return () => clearInterval(id)
-  }, [fetchAlerts])
-
-  useEffect(() => {
     fetchSyncHealth()
-    const id = setInterval(fetchSyncHealth, INTERVALS.syncHealth)
-    return () => clearInterval(id)
-  }, [fetchSyncHealth])
+
+    const latestId = setInterval(fetchLatest, INTERVALS.latest)
+    const historyId = setInterval(fetchHistory, INTERVALS.history)
+    const imageId = setInterval(fetchImages, INTERVALS.image)
+    const statusId = setInterval(fetchStatus, INTERVALS.status)
+    const alertsId = setInterval(fetchAlerts, INTERVALS.alerts)
+    const syncId = setInterval(fetchSyncHealth, INTERVALS.syncHealth)
+
+    return () => {
+      clearInterval(latestId)
+      clearInterval(historyId)
+      clearInterval(imageId)
+      clearInterval(statusId)
+      clearInterval(alertsId)
+      clearInterval(syncId)
+    }
+  }, [
+    isAuthenticated,
+    authLoading,
+    fetchLatest,
+    fetchHistory,
+    fetchImages,
+    fetchStatus,
+    fetchAlerts,
+    fetchSyncHealth,
+    resetLoadedFlags,
+  ])
 
   return (
     <DataContext.Provider
