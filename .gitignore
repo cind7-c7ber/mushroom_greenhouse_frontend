@@ -1,0 +1,21 @@
+# dependencies
+node_modules
+
+# build output
+dist
+
+# env files
+.env
+.env.*
+!.env.example
+
+# OS files
+.DS_Store
+
+# editor / local tooling
+.vscode
+.claude
+
+# misc local config
+settings.local.json
+launch.json

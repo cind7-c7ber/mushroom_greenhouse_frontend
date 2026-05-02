@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Greenhouse frame -->
+  <rect x="4" y="14" width="24" height="14" rx="1.5" fill="#27233A" stroke="#9A75B0" stroke-width="1.2"/>
+  <!-- Roof peak -->
+  <path d="M2 15 L16 4 L30 15" stroke="#9A75B0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Door -->
+  <rect x="13" y="20" width="6" height="8" rx="1" fill="#9A75B0" opacity="0.4"/>
+  <!-- Window pane left -->
+  <rect x="6" y="16" width="5" height="4" rx="0.5" fill="#4FA99A" opacity="0.5"/>
+  <!-- Window pane right -->
+  <rect x="21" y="16" width="5" height="4" rx="0.5" fill="#4FA99A" opacity="0.5"/>
+  <!-- Mushroom cap (small, inside) -->
+  <ellipse cx="16" cy="17" rx="3.5" ry="2" fill="#C4A8DA" opacity="0.8"/>
+  <path d="M14 17 Q14 20 16 20 Q18 20 18 17" fill="#E5EFF0" opacity="0.5"/>
+</svg>
