@@ -64,7 +64,7 @@ function RequireAuth({ children }) {
   const location = useLocation()
 
   if (loading) return <PageLoader />
-  if (!user) return <Navigate to="/login" state={{ from: location }} replace />
+if (!user) return <Navigate to="/signup" state={{ from: location }} replace />
 
   return children
 }
@@ -194,8 +194,8 @@ function AppRoutes() {
         />
       </Route>
 
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+      <Route path="*" element={<Navigate to="/signup" replace />} />
+        </Routes>
   )
 }
 

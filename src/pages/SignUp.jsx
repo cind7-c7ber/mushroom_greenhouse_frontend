@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import AuthShell from '../components/AuthShell'
 
 export default function SignUp() {
   const { signup } = useAuth()
@@ -14,6 +15,8 @@ export default function SignUp() {
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -47,97 +50,149 @@ export default function SignUp() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'var(--c-bg-base)' }}>
-      <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <p className="label-caps mb-1" style={{ color: 'var(--c-accent)' }}>
-            ACADEMIC CITY
-          </p>
-          <h1 className="text-xl font-semibold" style={{ color: 'var(--c-tx-primary)' }}>
-            Create your account
-          </h1>
-          <p className="text-xs mt-1" style={{ color: 'var(--c-tx-muted)' }}>
-            Access the greenhouse monitoring system
-          </p>
-        </div>
+    <AuthShell
+      title="Create Account"
+      subtitle="Create your greenhouse monitoring account to begin."
+      footer={
+        <>
+          Already have an account?{' '}
+          <Link to="/login" style={{ color: '#ffffff', textDecoration: 'underline', textUnderlineOffset: 3 }}>
+            Sign in
+          </Link>
+        </>
+      }
+    >
+      <div className="space-y-5">
+        {error && (
+          <div
+            className="px-4 py-3 rounded-2xl text-sm"
+            style={{
+              background: 'rgba(196,100,91,0.14)',
+              border: '1px solid rgba(255,255,255,0.16)',
+              color: '#fff1ef',
+            }}
+          >
+            {error}
+          </div>
+        )}
 
-        <div className="surface p-6">
-          {error && (
-            <div
-              className="mb-4 px-3 py-2.5 rounded-lg text-xs"
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="label-caps block mb-2" style={{ color: 'rgba(255,255,255,0.84)' }}>
+              Username
+            </label>
+            <input
+              type="text"
+              required
+              className="w-full rounded-2xl px-4 py-3.5 outline-none"
               style={{
-                background: 'rgba(196,100,91,0.1)',
-                border: '1px solid rgba(196,100,91,0.3)',
-                color: '#C4645B',
+                background: 'rgba(255,255,255,0.10)',
+                border: '1px solid rgba(255,255,255,0.24)',
+                color: '#ffffff',
               }}
-            >
-              {error}
-            </div>
-          )}
+              placeholder="Choose a username"
+              value={form.username}
+              onChange={(e) => setForm((p) => ({ ...p, username: e.target.value }))}
+            />
+          </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="label-caps block mb-1.5">Username</label>
-              <input
-                type="text"
-                required
-                className="input-field"
-                placeholder="Choose a username"
-                value={form.username}
-                onChange={(e) => setForm((p) => ({ ...p, username: e.target.value }))}
-              />
-            </div>
+          <div>
+            <label className="label-caps block mb-2" style={{ color: 'rgba(255,255,255,0.84)' }}>
+              Email Address
+            </label>
+            <input
+              type="email"
+              required
+              autoComplete="email"
+              className="w-full rounded-2xl px-4 py-3.5 outline-none"
+              style={{
+                background: 'rgba(255,255,255,0.10)',
+                border: '1px solid rgba(255,255,255,0.24)',
+                color: '#ffffff',
+              }}
+              placeholder="you@example.com"
+              value={form.email}
+              onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
+            />
+          </div>
 
-            <div>
-              <label className="label-caps block mb-1.5">Email address</label>
+          <div>
+            <label className="label-caps block mb-2" style={{ color: 'rgba(255,255,255,0.84)' }}>
+              Password
+            </label>
+            <div className="relative">
               <input
-                type="email"
+                type={showPassword ? 'text' : 'password'}
                 required
-                autoComplete="email"
-                className="input-field"
-                placeholder="you@example.com"
-                value={form.email}
-                onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
-              />
-            </div>
-
-            <div>
-              <label className="label-caps block mb-1.5">Password</label>
-              <input
-                type="password"
-                required
-                className="input-field"
-                placeholder="Min. 6 characters"
+                className="w-full rounded-2xl px-4 py-3.5 pr-16 outline-none"
+                style={{
+                  background: 'rgba(255,255,255,0.10)',
+                  border: '1px solid rgba(255,255,255,0.24)',
+                  color: '#ffffff',
+                }}
+                placeholder="Create a password"
                 value={form.password}
                 onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))}
               />
+              {form.password && (
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((s) => !s)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium"
+                  style={{ color: 'rgba(255,255,255,0.82)' }}
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              )}
             </div>
+          </div>
 
-            <div>
-              <label className="label-caps block mb-1.5">Confirm password</label>
+          <div>
+            <label className="label-caps block mb-2" style={{ color: 'rgba(255,255,255,0.84)' }}>
+              Confirm Password
+            </label>
+            <div className="relative">
               <input
-                type="password"
+                type={showConfirmPassword ? 'text' : 'password'}
                 required
-                className="input-field"
-                placeholder="Repeat password"
+                className="w-full rounded-2xl px-4 py-3.5 pr-16 outline-none"
+                style={{
+                  background: 'rgba(255,255,255,0.10)',
+                  border: '1px solid rgba(255,255,255,0.24)',
+                  color: '#ffffff',
+                }}
+                placeholder="Confirm your password"
                 value={form.confirm}
                 onChange={(e) => setForm((p) => ({ ...p, confirm: e.target.value }))}
               />
+              {form.confirm && (
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword((s) => !s)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium"
+                  style={{ color: 'rgba(255,255,255,0.82)' }}
+                >
+                  {showConfirmPassword ? 'Hide' : 'Show'}
+                </button>
+              )}
             </div>
+          </div>
 
-            <button type="submit" disabled={loading} className="btn-primary w-full mt-2">
-              {loading ? 'Creating account…' : 'Create Account'}
-            </button>
-          </form>
-
-          <p className="text-center text-xs mt-5" style={{ color: 'var(--c-tx-muted)' }}>
-            Already have an account?{' '}
-            <Link to="/login" className="font-medium" style={{ color: 'var(--c-accent-light)' }}>
-              Sign in
-            </Link>
-          </p>
-        </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-2xl py-3.5 text-base font-semibold transition"
+            style={{
+              background: 'rgba(255,255,255,0.22)',
+              border: '1px solid rgba(255,255,255,0.30)',
+              color: '#ffffff',
+              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.18)',
+            }}
+          >
+            {loading ? 'Creating account…' : 'Create Account'}
+          </button>
+        </form>
       </div>
-    </div>
+    </AuthShell>
   )
 }
