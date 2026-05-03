@@ -22,7 +22,7 @@ const METRICS = [
 const CONTROLLED_COLOR = '#DF2935'
 const CONTROL_COLOR = '#80FF72'
 
-function buildSeries(histCtrl = [], histPlain = []) {
+function buildSeries(histCtrl = [], histPlain = [], limit = 20) {
   const len = Math.max(histCtrl.length, histPlain.length)
 
   const all = Array.from({ length: len }, (_, i) => {
@@ -31,7 +31,7 @@ function buildSeries(histCtrl = [], histPlain = []) {
     return { ts: c?.timestamp ?? p?.timestamp ?? '', controlled: c, control: p }
   })
 
-  const sliced = all.slice(-20)
+  const sliced = all.slice(-limit)
 
   const tsLabels = sliced.map(({ ts }) =>
     ts ? new Date(ts).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : null
@@ -110,7 +110,7 @@ function StatCard({ label, value, unit, color }) {
   )
 }
 
-export default function ComparisonCharts({ historyControlled, historyControl, loading }) {
+export default function ComparisonCharts({ historyControlled, historyControl, loading, compact = false }) {
   const [activeMetric, setActiveMetric] = useState('temperature_c')
   const { settings } = useSettings()
   const current = METRICS.find((m) => m.key === activeMetric) ?? METRICS[0]
@@ -130,7 +130,7 @@ export default function ComparisonCharts({ historyControlled, historyControl, lo
         />
         <div
           style={{
-            height: 240,
+            height: compact ? 180 : 240,
             background: 'var(--c-bg-elevated)',
             borderRadius: 10,
             animation: 'pulse 1.5s infinite',
@@ -140,7 +140,7 @@ export default function ComparisonCharts({ historyControlled, historyControl, lo
     )
   }
 
-  const series = buildSeries(historyControlled, historyControl)
+  const series = buildSeries(historyControlled, historyControl, compact ? 12 : 20)
   const tickInterval = Math.max(1, Math.floor(series.length / 6))
 
   function calcStats(section) {
@@ -158,25 +158,27 @@ export default function ComparisonCharts({ historyControlled, historyControl, lo
   const plainStats = calcStats('control')
 
   return (
-    <div className="surface" style={{ padding: 20 }}>
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 18 }}>
+    <div className="surface" style={{ padding: compact ? 18 : 20 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 18, gap: 12 }}>
         <div>
-          <h3 className="section-heading">Environmental Comparison</h3>
+          <h3 className="section-heading">{compact ? 'Recent Trend Preview' : 'Environmental Comparison'}</h3>
           <p style={{ fontSize: 12, color: 'var(--c-tx-muted)', marginTop: 3 }}>
-            Controlled vs Control · {STAGES[settings.growthStage]?.label} thresholds · recent readings
+            Controlled vs Control · {STAGES[settings.growthStage]?.label} thresholds · {compact ? 'latest readings' : 'recent readings'}
           </p>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16, fontSize: 12 }}>
-          <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-            <span style={{ width: 20, borderTop: '2px solid', borderColor: CONTROLLED_COLOR, display: 'inline-block' }} />
-            <span style={{ color: 'var(--c-tx-secondary)' }}>Controlled</span>
-          </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-            <span style={{ width: 20, borderTop: '2px solid', borderColor: CONTROL_COLOR, display: 'inline-block' }} />
-            <span style={{ color: 'var(--c-tx-secondary)' }}>Control</span>
-          </span>
-        </div>
+        {!compact && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, fontSize: 12 }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+              <span style={{ width: 20, borderTop: '2px solid', borderColor: CONTROLLED_COLOR, display: 'inline-block' }} />
+              <span style={{ color: 'var(--c-tx-secondary)' }}>Controlled</span>
+            </span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+              <span style={{ width: 20, borderTop: '2px solid', borderColor: CONTROL_COLOR, display: 'inline-block' }} />
+              <span style={{ color: 'var(--c-tx-secondary)' }}>Control</span>
+            </span>
+          </div>
+        )}
       </div>
 
       <div
@@ -188,6 +190,7 @@ export default function ComparisonCharts({ historyControlled, historyControl, lo
           padding: 4,
           borderRadius: 10,
           width: 'fit-content',
+          flexWrap: 'wrap',
         }}
       >
         {METRICS.map((m) => (
@@ -195,9 +198,9 @@ export default function ComparisonCharts({ historyControlled, historyControl, lo
             key={m.key}
             onClick={() => setActiveMetric(m.key)}
             style={{
-              padding: '6px 14px',
+              padding: compact ? '5px 12px' : '6px 14px',
               borderRadius: 7,
-              fontSize: 12,
+              fontSize: compact ? 11 : 12,
               fontWeight: 500,
               cursor: 'pointer',
               border: 'none',
@@ -212,7 +215,7 @@ export default function ComparisonCharts({ historyControlled, historyControl, lo
         ))}
       </div>
 
-      <div style={{ height: 220 }}>
+      <div style={{ height: compact ? 170 : 220 }}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={series} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
             <CartesianGrid strokeDasharray="2 6" stroke="rgba(255,255,255,0.04)" vertical={false} />
@@ -257,7 +260,7 @@ export default function ComparisonCharts({ historyControlled, historyControl, lo
         </ResponsiveContainer>
       </div>
 
-      {(ctrlStats || plainStats) && (
+      {!compact && (ctrlStats || plainStats) && (
         <div
           style={{
             marginTop: 18,

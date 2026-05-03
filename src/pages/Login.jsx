@@ -24,7 +24,11 @@ export default function Login() {
       await login(form.username.trim(), form.password)
       navigate(redirectTo, { replace: true })
     } catch (err) {
-      setError(err?.response?.data?.detail || err.message || 'Login failed.')
+      if (err.code === 'ECONNABORTED') {
+        setError('The server is waking up. Please wait a moment and try again.')
+      } else {
+        setError(err?.response?.data?.detail || err.message || 'Login failed.')
+      }
     } finally {
       setLoading(false)
     }

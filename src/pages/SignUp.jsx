@@ -43,7 +43,11 @@ export default function SignUp() {
       })
       navigate('/', { replace: true })
     } catch (err) {
-      setError(err?.response?.data?.detail || err.message || 'Signup failed.')
+      if (err.code === 'ECONNABORTED') {
+        setError('The server is waking up. Please wait a moment and try again.')
+      } else {
+        setError(err?.response?.data?.detail || err.message || 'Signup failed.')
+      }
     } finally {
       setLoading(false)
     }

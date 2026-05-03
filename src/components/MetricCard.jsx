@@ -45,21 +45,18 @@ export default function MetricCard({ metric, value, status = 'unknown', prevValu
 
   return (
     <div style={{
-      position: 'relative', borderRadius: 10, overflow: 'hidden',
-      background: 'var(--c-bg-card)',
-      border: '1px solid var(--c-bg-border)',
+      position: 'relative', borderRadius: 12, overflow: 'hidden',
+      background: 'rgba(255, 255, 255, 0.03)',
+      border: '1px solid rgba(255, 255, 255, 0.08)',
       transition: 'border-color 0.15s',
     }}>
-      {/* Left accent bar */}
-      <div style={{ position: 'absolute', top: 0, left: 0, width: 3, height: '100%', background: meta.accentColor }} />
-
-      <div style={{ padding: '12px 14px 12px 18px' }}>
+      <div style={{ padding: '14px 16px' }}>
         {/* Label + status row */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-          <p className="label-caps">{meta.label}</p>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+          <p className="label-caps" style={{ fontSize: 9, opacity: 0.8 }}>{meta.label}</p>
           {status !== 'unknown' && (
             <span style={{
-              fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase',
+              fontSize: 8, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase',
               padding: '2px 6px', borderRadius: 4,
               background: statusMeta.bg, border: `1px solid ${statusMeta.border}`,
               color: statusMeta.color, flexShrink: 0,
@@ -70,12 +67,14 @@ export default function MetricCard({ metric, value, status = 'unknown', prevValu
         </div>
 
         {/* Value + trend arrow */}
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 5 }}>
-          <span style={{ fontSize: 26, fontWeight: 600, fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.02em', lineHeight: 1, color: meta.accentColor }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+          <span style={{ fontSize: 28, fontWeight: 700, fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.02em', lineHeight: 1, color: 'var(--c-tx-primary)' }}>
             {display}
           </span>
-          <span style={{ fontSize: 11, color: 'var(--c-tx-muted)', fontWeight: 400 }}>{meta.unit}</span>
-          <TrendArrow metric={metric} value={value} prevValue={prevValue} />
+          <span style={{ fontSize: 12, color: 'var(--c-tx-muted)', fontWeight: 500 }}>{meta.unit}</span>
+          <div style={{ marginLeft: 'auto' }}>
+            <TrendArrow metric={metric} value={value} prevValue={prevValue} />
+          </div>
         </div>
       </div>
     </div>

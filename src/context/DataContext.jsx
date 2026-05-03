@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect, useCallback, useRef } f
 import { getLatestControlled, getLatestControl, getSensorHistory } from '../api/sensors'
 import { getLatestImage, getImageHistory } from '../api/images'
 import { getLatestStatus } from '../api/status'
-import { getAlertSummary, getActiveAlerts } from '../api/alerts'
+import { getAlertSummary, getActiveAlerts, getAlertHistory } from '../api/alerts'
 import { getSyncHealth } from '../api/sync'
 import { useAuth } from './AuthContext'
 
@@ -30,12 +30,14 @@ export function DataProvider({ children }) {
   const [status, setStatus] = useState(null)
   const [alertSummary, setAlertSummary] = useState(null)
   const [activeAlerts, setActiveAlerts] = useState([])
+  const [alertHistory, setAlertHistory] = useState([])
   const [syncHealth, setSyncHealth] = useState(null)
   const [lastUpdated, setLastUpdated] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [prevControlled, setPrevControlled] = useState(null)
   const [prevControl, setPrevControl] = useState(null)
+  const [alertHistoryLoading, setAlertHistoryLoading] = useState(true)
 
   const prevCtrlRef = useRef(null)
   const prevPlainRef = useRef(null)
@@ -144,15 +146,18 @@ export function DataProvider({ children }) {
 
   const fetchAlerts = useCallback(async () => {
     try {
-      const [summary, active] = await Promise.allSettled([
+      const [summary, active, history] = await Promise.allSettled([
         getAlertSummary(),
         getActiveAlerts(),
+        getAlertHistory(),
       ])
 
       if (summary.status === 'fulfilled') setAlertSummary(summary.value)
       if (active.status === 'fulfilled') setActiveAlerts(Array.isArray(active.value) ? active.value : [])
+      if (history.status === 'fulfilled') setAlertHistory(Array.isArray(history.value) ? history.value : [])
     } finally {
       loadedRef.current.alerts = true
+      setAlertHistoryLoading(false)
       markLoaded()
     }
   }, [markLoaded])
@@ -180,17 +185,20 @@ export function DataProvider({ children }) {
       setStatus(null)
       setAlertSummary(null)
       setActiveAlerts([])
+      setAlertHistory([])
       setSyncHealth(null)
       setLastUpdated(null)
       setError(null)
       setPrevControlled(null)
       setPrevControl(null)
+      setAlertHistoryLoading(false)
       setLoading(false)
       resetLoadedFlags()
       return
     }
 
     setLoading(true)
+    setAlertHistoryLoading(true)
     resetLoadedFlags()
 
     fetchLatest()
@@ -239,12 +247,14 @@ export function DataProvider({ children }) {
         status,
         alertSummary,
         activeAlerts,
+        alertHistory,
         syncHealth,
         lastUpdated,
         loading,
         error,
         prevControlled,
         prevControl,
+        alertHistoryLoading,
         intervals: INTERVALS,
         refreshLatest: fetchLatest,
         refreshHistory: fetchHistory,

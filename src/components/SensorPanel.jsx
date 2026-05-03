@@ -46,87 +46,85 @@ export default function SensorPanel({ section, data, loading, prevData }) {
 
   return (
     <div
+      className="surface"
       style={{
-        borderRadius: 12,
-        background: 'var(--c-bg-elevated)',
+        borderRadius: 16,
+        padding: '20px',
+        background: 'var(--c-bg-surface)',
         border: '1px solid var(--c-bg-border)',
         overflow: 'hidden',
       }}
     >
       <div
         style={{
-          padding: '14px 18px',
+          paddingBottom: '20px',
           borderBottom: '1px solid var(--c-bg-border)',
-          borderLeft: `3px solid ${config.lineColor}`,
           display: 'flex',
           alignItems: 'flex-start',
           justifyContent: 'space-between',
+          marginBottom: '20px',
         }}
       >
         <div>
-          <p
-            style={{
-              fontSize: 10,
-              fontWeight: 700,
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              color: config.lineColor,
-              marginBottom: 3,
-            }}
-          >
-            {config.label}
-          </p>
-          <p style={{ fontSize: 12, color: 'var(--c-tx-muted)' }}>{config.description}</p>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-          {overallMeta && (
-            <span
+          <div className="flex items-center gap-3 mb-2">
+            <h3
               style={{
-                fontSize: 10,
-                fontWeight: 700,
-                letterSpacing: '0.1em',
+                fontSize: 12,
+                fontWeight: 800,
+                letterSpacing: '0.05em',
                 textTransform: 'uppercase',
-                padding: '3px 8px',
-                borderRadius: 5,
-                background: overallMeta.bg,
-                border: `1px solid ${overallMeta.border}`,
-                color: overallMeta.color,
+                color: config.lineColor,
               }}
             >
-              {overallMeta.label}
+              {config.label}
+            </h3>
+            {overallMeta && (
+              <span
+                style={{
+                  fontSize: 9,
+                  fontWeight: 800,
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                  padding: '2px 8px',
+                  borderRadius: 4,
+                  background: overallMeta.bg,
+                  border: `1px solid ${overallMeta.border}`,
+                  color: overallMeta.color,
+                }}
+              >
+                {overallMeta.label}
+              </span>
+            )}
+            <span
+              style={{
+                fontSize: 9,
+                fontWeight: 800,
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                padding: '2px 8px',
+                borderRadius: 4,
+                background: config.tagBg,
+                border: `1px solid ${config.tagBorder}`,
+                color: config.tagColor,
+              }}
+            >
+              {section}
             </span>
-          )}
-
-          <span
-            style={{
-              fontSize: 10,
-              fontWeight: 600,
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              padding: '3px 8px',
-              borderRadius: 5,
-              background: config.tagBg,
-              border: `1px solid ${config.tagBorder}`,
-              color: config.tagColor,
-            }}
-          >
-            {section}
-          </span>
+          </div>
+          <p style={{ fontSize: 13, color: 'var(--c-tx-muted)' }}>{config.description}</p>
         </div>
       </div>
 
-      <div style={{ padding: 14 }}>
+      <div>
         {loading ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 10 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
             {METRICS.map((m) => (
               <SkeletonCard key={m} />
             ))}
           </div>
         ) : data ? (
           <div
-            style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}
-            className="sm:grid-cols-3 xl:grid-cols-5"
+            style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}
           >
             {METRICS.map((m) => (
               <MetricCard key={m} metric={m} value={data[m]} status={metricStatuses[m]} prevValue={prevData?.[m]} />
@@ -135,9 +133,6 @@ export default function SensorPanel({ section, data, loading, prevData }) {
         ) : (
           <div style={{ padding: '24px 0', textAlign: 'center' }}>
             <p style={{ fontSize: 13, color: 'var(--c-tx-muted)' }}>No data received</p>
-            <p style={{ fontSize: 11, color: 'var(--c-tx-muted)', marginTop: 4, opacity: 0.6 }}>
-              Waiting for backend telemetry data
-            </p>
           </div>
         )}
       </div>
