@@ -166,3 +166,20 @@
   from { opacity: 0; }
   to   { opacity: 1; }
 }
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.glass-iridescent {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.05) 40%,
+    rgba(180, 200, 255, 0.1) 70%,
+    rgba(255, 255, 255, 0.1)
+  );
+  background-size: 200% 200%;
+  animation: shimmer 15s linear infinite;
+}

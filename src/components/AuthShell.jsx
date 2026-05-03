@@ -11,8 +11,7 @@ export default function AuthShell({
     <div
       className="min-h-screen flex items-center justify-center px-4 py-8"
       style={{
-        backgroundImage:
-          "linear-gradient(rgba(16,18,34,0.30), rgba(16,18,34,0.38)), url('/auth-bg.webp')",
+        backgroundImage: "url('/auth-bg2.png')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -23,71 +22,44 @@ export default function AuthShell({
           style={{
             position: 'relative',
             overflow: 'hidden',
-            borderRadius: 30,
-            padding: 28,
-            background: 'rgba(255,255,255,0.14)',
-            border: '1px solid rgba(255,255,255,0.28)',
+            borderRadius: 40,
+            padding: '40px 32px',
+            background: 'rgba(255, 255, 255, 0.12)',
+            border: '1px solid rgba(255, 255, 255, 0.5)',
             boxShadow:
-              '0 20px 60px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.25)',
-            backdropFilter: 'blur(22px) saturate(160%)',
-            WebkitBackdropFilter: 'blur(22px) saturate(160%)',
+              '0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 0 24px rgba(255, 255, 255, 0.15)',
+            backdropFilter: 'blur(28px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(28px) saturate(180%)',
           }}
         >
+          {/* Iridescent Overlay */}
           <div
+            className="glass-iridescent"
             style={{
               position: 'absolute',
               inset: 0,
               pointerEvents: 'none',
-              background:
-                'linear-gradient(135deg, rgba(255,255,255,0.22), rgba(255,255,255,0.04) 42%, rgba(255,255,255,0.10) 100%)',
-            }}
-          />
-
-          <div
-            style={{
-              position: 'absolute',
-              top: -80,
-              right: -40,
-              width: 180,
-              height: 180,
-              borderRadius: '50%',
-              background: 'rgba(188, 214, 255, 0.20)',
-              filter: 'blur(24px)',
-              pointerEvents: 'none',
-            }}
-          />
-
-          <div
-            style={{
-              position: 'absolute',
-              bottom: -70,
-              left: -30,
-              width: 150,
-              height: 150,
-              borderRadius: '50%',
-              background: 'rgba(218, 177, 255, 0.18)',
-              filter: 'blur(24px)',
-              pointerEvents: 'none',
+              mixBlendMode: 'overlay',
             }}
           />
 
           <div style={{ position: 'relative', zIndex: 1 }}>
-            <div className="text-center mb-8">
+            <div className="mb-8">
               <p
-                className="label-caps mb-2"
-                style={{ color: 'rgba(245,240,255,0.88)', letterSpacing: '0.18em' }}
+                className="label-caps mb-2 text-xs font-bold tracking-widest"
+                style={{ color: 'rgba(0,0,0,0.7)' }}
               >
                 ACADEMIC CITY
               </p>
               <h1
-                className="text-3xl font-semibold"
-                style={{ color: '#ffffff', letterSpacing: '-0.03em' }}
+                className="text-4xl font-bold mb-2"
+                style={{ color: '#1a1a1a', letterSpacing: '-0.02em' }}
               >
                 {title}
               </h1>
               <p
-                className="text-sm mt-2"
-                style={{ color: 'rgba(255,255,255,0.78)' }}
+                className="text-sm font-semibold"
+                style={{ color: 'rgba(0,0,0,0.8)' }}
               >
                 {subtitle}
               </p>
@@ -97,8 +69,8 @@ export default function AuthShell({
 
             {footer && (
               <div
-                className="text-center text-sm mt-6"
-                style={{ color: 'rgba(255,255,255,0.78)' }}
+                className="text-center text-sm mt-8"
+                style={{ color: 'rgba(0,0,0,0.8)' }}
               >
                 {footer}
               </div>
@@ -107,15 +79,16 @@ export default function AuthShell({
             {adminLink && (
               <p
                 className="text-center mt-6 text-sm"
-                style={{ color: 'rgba(255,255,255,0.74)' }}
+                style={{ color: 'rgba(0,0,0,0.6)' }}
               >
                 Administrator?{' '}
                 <Link
                   to="/admin-login"
                   style={{
-                    color: '#ffffff',
+                    color: '#000000',
+                    fontWeight: 'bold',
                     textDecoration: 'underline',
-                    textUnderlineOffset: 3,
+                    textUnderlineOffset: 4,
                   }}
                 >
                   Admin login
