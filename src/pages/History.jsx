@@ -111,7 +111,7 @@ function ComparisonMatrix({ histCtrl, histPlain, stage }) {
       <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 0.6fr 1fr', gap: 20, borderBottom: '1px solid var(--c-bg-border)', paddingBottom: 12, marginBottom: 12 }}>
         <p className="label-caps" style={{ opacity: 0.6 }}>Metric</p>
         <p className="label-caps" style={{ color: CONTROLLED_COLOR }}>Controlled Section</p>
-        <p className="label-caps" style={{ textAlign: 'center', opacity: 0.6 }}>Delta</p>
+        <p className="label-caps" style={{ textAlign: 'center', opacity: 0.6 }}>Difference</p>
         <p className="label-caps" style={{ color: CONTROL_COLOR }}>Control Section</p>
       </div>
 
@@ -137,7 +137,7 @@ function ComparisonMatrix({ histCtrl, histPlain, stage }) {
               {/* Metric Info */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                 <div style={{ width: 80 }}>
-                   <MiniSparkline readings={histCtrl} metricKey={key} color={CONTROLLED_COLOR} />
+                   <MiniSparkline readings={histCtrl} metricKey={key} color="#B08968" />
                 </div>
                 <div>
                   <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--c-tx-primary)' }}>{label}</p>
@@ -245,7 +245,7 @@ function RecordsTab({ pairs, stage }) {
     const statuses = evaluateReading(data, stage)
     const overall = overallStatus(statuses)
     
-    if (overall === 'optimal') return { label: 'Conditions: Ideal', color: '#4FA99A' }
+    if (overall === 'optimal') return { label: 'Conditions: Ideal', color: '#81C784' }
     
     // Pick the most critical issue to display
     const metrics = ['temperature_c', 'humidity_pct', 'co2_ppm', 'light_lux']
@@ -261,10 +261,10 @@ function RecordsTab({ pairs, stage }) {
     for (const m of metrics) {
       if (statuses[m] === 'watch') {
         const label = METRICS.find(met => met.key === m)?.label || m
-        return { label: `Check ${label}`, color: '#C4A85B' }
+        return { label: `Check ${label}`, color: '#38BDF8' }
       }
     }
-    return { label: 'Monitor', color: '#C4A85B' }
+    return { label: 'Monitor', color: '#38BDF8' }
   }
 
   function handleExport(limit) {
@@ -274,65 +274,13 @@ function RecordsTab({ pairs, stage }) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      {/* Search & Filters */}
-      <div className="surface" style={{ padding: '16px 20px' }}>
-        <p style={{ fontSize: 13, color: 'var(--c-tx-secondary)', marginBottom: 16, opacity: 0.8 }}>
-           Showing latest <strong>{filtered.length}</strong> diary entries
-        </p>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'center' }}>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <span className="label-caps" style={{ opacity: 0.6 }}>Filter Section</span>
-              <div style={{ display: 'flex', gap: 4 }}>
-                {['both', 'controlled', 'control'].map(s => (
-                  <button
-                    key={s}
-                    onClick={() => setSectionFilter(s)}
-                    style={{
-                      padding: '6px 14px',
-                      borderRadius: 8,
-                      fontSize: 12,
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      border: 'none',
-                      background: sectionFilter === s ? 'var(--c-accent-dim)' : 'transparent',
-                      outline: sectionFilter === s ? '1px solid var(--c-accent-border)' : '1px solid var(--c-bg-border)',
-                      color: sectionFilter === s ? 'var(--c-tx-primary)' : 'var(--c-tx-muted)',
-                    }}
-                  >
-                    {s === 'both' ? 'Both' : s === 'controlled' ? 'Controlled Section' : 'Control Section'}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <span className="label-caps" style={{ opacity: 0.6 }}>Filter Issues</span>
-              <div style={{ display: 'flex', gap: 4 }}>
-                {['all', 'optimal', 'watch', 'danger'].map(s => (
-                  <button
-                    key={s}
-                    onClick={() => setStatusFilter(s)}
-                    style={{
-                      padding: '6px 14px',
-                      borderRadius: 8,
-                      fontSize: 12,
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      border: 'none',
-                      background: statusFilter === s ? 'var(--c-accent-dim)' : 'transparent',
-                      outline: statusFilter === s ? '1px solid var(--c-accent-border)' : '1px solid var(--c-bg-border)',
-                      color: statusFilter === s ? 'var(--c-tx-primary)' : 'var(--c-tx-muted)',
-                    }}
-                  >
-                    {s === 'all' ? 'All Logs' : s === 'optimal' ? 'Ideal Only' : s === 'watch' ? 'Warnings' : 'Alerts'}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
+    <div className="surface" style={{ padding: '0' }}>
+      {/* Integrated Filters Header */}
+      <div style={{ padding: '24px 28px', borderBottom: '1px solid var(--c-bg-border)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+          <p style={{ fontSize: 13, color: 'var(--c-tx-secondary)', opacity: 0.8 }}>
+             Showing latest <strong>{filtered.length}</strong> diary entries
+          </p>
           <div style={{ position: 'relative' }}>
             <button
               onClick={() => setShowExport(!showExport)}
@@ -408,88 +356,146 @@ function RecordsTab({ pairs, stage }) {
             )}
           </div>
         </div>
+
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 32, alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+            <span className="label-caps" style={{ opacity: 0.6, fontSize: 10 }}>Section</span>
+            <div style={{ display: 'flex', gap: 4 }}>
+              {['both', 'controlled', 'control'].map(s => (
+                <button
+                  key={s}
+                  onClick={() => setSectionFilter(s)}
+                  style={{
+                    padding: '6px 14px',
+                    borderRadius: 8,
+                    fontSize: 11,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    border: 'none',
+                    background: sectionFilter === s ? 'var(--c-accent-dim)' : 'transparent',
+                    outline: sectionFilter === s ? '1px solid var(--c-accent-border)' : '1px solid var(--c-bg-border)',
+                    color: sectionFilter === s ? 'var(--c-tx-primary)' : 'var(--c-tx-muted)',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  {s === 'both' ? 'Both' : s === 'controlled' ? 'Controlled' : 'Control'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+            <span className="label-caps" style={{ opacity: 0.6, fontSize: 10 }}>Issues</span>
+            <div style={{ display: 'flex', gap: 4 }}>
+              {['all', 'optimal', 'watch', 'danger'].map(s => (
+                <button
+                  key={s}
+                  onClick={() => setStatusFilter(s)}
+                  style={{
+                    padding: '6px 14px',
+                    borderRadius: 8,
+                    fontSize: 11,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    border: 'none',
+                    background: statusFilter === s ? 'var(--c-accent-dim)' : 'transparent',
+                    outline: statusFilter === s ? '1px solid var(--c-accent-border)' : '1px solid var(--c-bg-border)',
+                    color: statusFilter === s ? 'var(--c-tx-primary)' : 'var(--c-tx-muted)',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  {s === 'all' ? 'All Logs' : s === 'optimal' ? 'Ideal' : s === 'watch' ? 'Warnings' : 'Alerts'}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
+      {/* Diary List Header System */}
+      <div style={{ background: 'rgba(255,255,255,0.04)', borderBottom: '1px solid var(--c-bg-border)' }}>
+        {/* Main Section Header */}
+        <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr 1fr', gap: 16, padding: '14px 28px 4px 28px' }}>
+          <div />
+          <p className="label-caps" style={{ color: CONTROLLED_COLOR, fontSize: 11, fontWeight: 800, textAlign: 'center', letterSpacing: '0.05em' }}>Controlled Section</p>
+          <div style={{ marginLeft: 40 }}>
+            <p className="label-caps" style={{ color: CONTROL_COLOR, fontSize: 11, fontWeight: 800, textAlign: 'center', letterSpacing: '0.05em' }}>Control Section</p>
+          </div>
+        </div>
+        {/* Column Labels */}
+        <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr 1fr', gap: 16, padding: '4px 28px 14px 28px' }}>
+          <p className="label-caps" style={{ color: 'var(--c-tx-primary)', opacity: 0.9, fontSize: 11, fontWeight: 700 }}>Time</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 10 }}>
+             {['Temp', 'Hum', 'CO₂', 'Lux', 'Mst'].map(h => <p key={h} className="label-caps" style={{ color: 'var(--c-tx-primary)', opacity: 0.9, fontSize: 11, fontWeight: 700, textAlign: 'center' }}>{h}</p>)}
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 10, marginLeft: 40 }}>
+             {['Temp', 'Hum', 'CO₂', 'Lux', 'Mst'].map(h => <p key={h} className="label-caps" style={{ color: 'var(--c-tx-primary)', opacity: 0.9, fontSize: 11, fontWeight: 700, textAlign: 'center' }}>{h}</p>)}
+          </div>
+        </div>
+      </div>
 
-
-      {/* Diary List */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {/* Diary List Rows */}
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
         {filtered.length === 0 ? (
-          <div className="surface" style={{ padding: '60px 0', textAlign: 'center' }}>
-            <p style={{ color: 'var(--c-tx-muted)', fontSize: 14 }}>No diary entries found for the selected filters.</p>
+          <div style={{ padding: '60px 0', textAlign: 'center' }}>
+            <p style={{ color: 'var(--c-tx-muted)', fontSize: 14 }}>No diary entries found.</p>
           </div>
         ) : filtered.map(({ controlled: c, control: p, timestamp }, idx) => {
           const ts = timestamp ? new Date(timestamp) : null
           const timeStr = ts ? ts.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : '—'
           const dateStr = ts ? ts.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : ''
           
-          const csH = getHumanStatus(c, stage)
-          const psH = getHumanStatus(p, stage)
-
           return (
-            <div key={idx} className="surface" style={{ padding: '20px 24px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr 1fr', gap: 32, alignItems: 'center' }}>
+            <div 
+              key={idx} 
+              style={{ 
+                padding: '14px 28px', 
+                borderBottom: idx === filtered.length - 1 ? 'none' : '1px solid var(--c-bg-border)',
+                transition: 'background 0.2s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.01)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+            >
+              <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr 1fr', gap: 16, alignItems: 'center' }}>
                 {/* Time Column */}
                 <div>
                   <p style={{ fontSize: 16, fontWeight: 800, color: 'var(--c-tx-primary)' }}>{timeStr}</p>
-                  <p style={{ fontSize: 12, color: 'var(--c-tx-muted)', fontWeight: 500, marginTop: 2 }}>{dateStr}</p>
+                  <p style={{ fontSize: 10, color: 'var(--c-tx-muted)', fontWeight: 600, marginTop: 1 }}>{dateStr}</p>
                 </div>
 
                 {/* Controlled Section */}
-                {(sectionFilter === 'both' || sectionFilter === 'controlled') && (
-                  <div style={{ borderLeft: `3px solid ${CONTROLLED_COLOR}`, paddingLeft: 16 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                      <span style={{ fontSize: 10, fontWeight: 800, color: CONTROLLED_COLOR, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Controlled Section</span>
-                      <span style={{ fontSize: 11, color: csH.color, fontWeight: 700, marginLeft: 12 }}>• {csH.label}</span>
-                    </div>
+                {(sectionFilter === 'both' || sectionFilter === 'controlled') ? (
+                  <div style={{ borderLeft: `2px solid ${CONTROLLED_COLOR}`, paddingLeft: 12 }}>
                     {c ? (
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px 20px' }}>
-                        <div>
-                          <p style={{ fontSize: 10, opacity: 0.5, textTransform: 'uppercase', marginBottom: 2 }}>Temperature</p>
-                          <p style={{ fontSize: 14, fontWeight: 600 }}>{parseFloat(c.temperature_c.toFixed(1))}°C</p>
-                        </div>
-                        <div>
-                          <p style={{ fontSize: 10, opacity: 0.5, textTransform: 'uppercase', marginBottom: 2 }}>Humidity</p>
-                          <p style={{ fontSize: 14, fontWeight: 600 }}>{parseFloat(c.humidity_pct.toFixed(1))}%</p>
-                        </div>
-                        <div>
-                          <p style={{ fontSize: 10, opacity: 0.5, textTransform: 'uppercase', marginBottom: 2 }}>CO₂</p>
-                          <p style={{ fontSize: 14, fontWeight: 600 }}>{Math.round(c.co2_ppm)} ppm</p>
-                        </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 10 }}>
+                        <span style={{ fontSize: 14, fontWeight: 600, textAlign: 'center' }}>{parseFloat(c.temperature_c.toFixed(1))}°</span>
+                        <span style={{ fontSize: 14, fontWeight: 600, textAlign: 'center' }}>{parseFloat(c.humidity_pct.toFixed(1))}%</span>
+                        <span style={{ fontSize: 14, fontWeight: 600, textAlign: 'center' }}>{Math.round(c.co2_ppm)}</span>
+                        <span style={{ fontSize: 14, fontWeight: 600, textAlign: 'center' }}>{Math.round(c.light_lux)}</span>
+                        <span style={{ fontSize: 14, fontWeight: 600, textAlign: 'center' }}>{parseFloat(c.moisture_pct.toFixed(1))}%</span>
                       </div>
                     ) : (
-                      <p style={{ fontSize: 13, color: 'var(--c-tx-muted)', fontStyle: 'italic' }}>Reading missed</p>
+                      <p style={{ fontSize: 12, color: 'var(--c-tx-muted)', fontStyle: 'italic' }}>Missed reading</p>
                     )}
                   </div>
-                )}
+                ) : <div />}
 
                 {/* Control Section */}
-                {(sectionFilter === 'both' || sectionFilter === 'control') && (
-                  <div style={{ borderLeft: `3px solid ${CONTROL_COLOR}`, paddingLeft: 16 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                      <span style={{ fontSize: 10, fontWeight: 800, color: CONTROL_COLOR, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Control Section</span>
-                      <span style={{ fontSize: 11, color: psH.color, fontWeight: 700, marginLeft: 12 }}>• {psH.label}</span>
-                    </div>
+                {(sectionFilter === 'both' || sectionFilter === 'control') ? (
+                  <div style={{ borderLeft: `2px solid ${CONTROL_COLOR}`, paddingLeft: 12, marginLeft: 40 }}>
                     {p ? (
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px 20px' }}>
-                        <div>
-                          <p style={{ fontSize: 10, opacity: 0.5, textTransform: 'uppercase', marginBottom: 2 }}>Temperature</p>
-                          <p style={{ fontSize: 14, fontWeight: 600 }}>{parseFloat(p.temperature_c.toFixed(1))}°C</p>
-                        </div>
-                        <div>
-                          <p style={{ fontSize: 10, opacity: 0.5, textTransform: 'uppercase', marginBottom: 2 }}>Humidity</p>
-                          <p style={{ fontSize: 14, fontWeight: 600 }}>{parseFloat(p.humidity_pct.toFixed(1))}%</p>
-                        </div>
-                        <div>
-                          <p style={{ fontSize: 10, opacity: 0.5, textTransform: 'uppercase', marginBottom: 2 }}>CO₂</p>
-                          <p style={{ fontSize: 14, fontWeight: 600 }}>{Math.round(p.co2_ppm)} ppm</p>
-                        </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 10 }}>
+                        <span style={{ fontSize: 14, fontWeight: 600, textAlign: 'center' }}>{parseFloat(p.temperature_c.toFixed(1))}°</span>
+                        <span style={{ fontSize: 14, fontWeight: 600, textAlign: 'center' }}>{parseFloat(p.humidity_pct.toFixed(1))}%</span>
+                        <span style={{ fontSize: 14, fontWeight: 600, textAlign: 'center' }}>{Math.round(p.co2_ppm)}</span>
+                        <span style={{ fontSize: 14, fontWeight: 600, textAlign: 'center' }}>{Math.round(p.light_lux)}</span>
+                        <span style={{ fontSize: 14, fontWeight: 600, textAlign: 'center' }}>{parseFloat(p.moisture_pct.toFixed(1))}%</span>
                       </div>
                     ) : (
-                      <p style={{ fontSize: 13, color: 'var(--c-tx-muted)', fontStyle: 'italic' }}>Reading missed</p>
+                      <p style={{ fontSize: 12, color: 'var(--c-tx-muted)', fontStyle: 'italic' }}>Missed reading</p>
                     )}
                   </div>
-                )}
+                ) : <div />}
               </div>
             </div>
           )
@@ -507,13 +513,13 @@ function getThresholdBands(metric, stage) {
   const result = []
 
   if (bands.optimal) {
-    result.push({ y1: bands.optimal[0], y2: bands.optimal[1], fill: 'rgba(79,169,154,0.1)', label: 'Optimal' })
+    result.push({ y1: bands.optimal[0], y2: bands.optimal[1], fill: 'rgba(129,199,132,0.1)', label: 'Optimal' })
   }
 
   if (bands.watch) {
     for (const [w1, w2] of bands.watch) {
       if (w1 !== -Infinity && w2 !== Infinity) {
-        result.push({ y1: w1, y2: w2, fill: 'rgba(196,168,91,0.08)' })
+        result.push({ y1: w1, y2: w2, fill: 'rgba(56,189,248,0.08)' })
       }
     }
   }
@@ -707,66 +713,11 @@ function TrendsTab({ histCtrl, histPlain, stage }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      {/* Primary Filters */}
-      <div className="surface" style={{ padding: '14px 18px' }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'center' }}>
-          <div>
-            <p className="label-caps" style={{ marginBottom: 6 }}>Sensor Type</p>
-            <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-              {METRICS.map(m => (
-                <button
-                  key={m.key}
-                  onClick={() => setActiveMetric(m.key)}
-                  style={{
-                    padding: '5px 12px',
-                    borderRadius: 7,
-                    fontSize: 11,
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    border: 'none',
-                    background: activeMetric === m.key ? 'var(--c-accent-dim)' : 'transparent',
-                    outline: activeMetric === m.key ? '1px solid var(--c-accent-border)' : '1px solid var(--c-bg-border)',
-                    color: activeMetric === m.key ? 'var(--c-tx-primary)' : 'var(--c-tx-muted)',
-                  }}
-                >
-                  {m.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <p className="label-caps" style={{ marginBottom: 6 }}>History Length</p>
-            <div style={{ display: 'flex', gap: 4 }}>
-              {TIME_RANGES.map(r => (
-                <button
-                  key={r.value}
-                  onClick={() => setTimeRange(r.value)}
-                  style={{
-                    padding: '5px 12px',
-                    borderRadius: 7,
-                    fontSize: 11,
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    border: 'none',
-                    background: timeRange === r.value ? 'var(--c-accent-dim)' : 'transparent',
-                    outline: timeRange === r.value ? '1px solid var(--c-accent-border)' : '1px solid var(--c-bg-border)',
-                    color: timeRange === r.value ? 'var(--c-tx-primary)' : 'var(--c-tx-muted)',
-                  }}
-                >
-                  {r.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Unified Chart & Stats Container */}
-      <div className="surface" style={{ padding: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 24 }}>
+      <div className="surface" style={{ padding: '28px' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 28 }}>
           <div>
-            <h3 className="section-heading" style={{ fontSize: 18 }}>{current.label} Progress</h3>
+            <h3 className="section-heading" style={{ fontSize: 18 }}>{current.label} Chart</h3>
             <p style={{ fontSize: 13, color: 'var(--c-tx-muted)', marginTop: 4 }}>
                Showing trends and typical levels for the selected time period
             </p>
@@ -794,6 +745,61 @@ function TrendsTab({ histCtrl, histPlain, stage }) {
             </svg>
             Display Options
           </button>
+        </div>
+
+        {/* Integrated Filters */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 32, alignItems: 'center', marginBottom: 32, paddingBottom: 24, borderBottom: '1px solid var(--c-bg-border)' }}>
+          <div>
+            <p className="label-caps" style={{ marginBottom: 8, opacity: 0.6 }}>Sensor Type</p>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+              {METRICS.map(m => (
+                <button
+                  key={m.key}
+                  onClick={() => setActiveMetric(m.key)}
+                  style={{
+                    padding: '6px 14px',
+                    borderRadius: 8,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    border: 'none',
+                    background: activeMetric === m.key ? 'var(--c-accent-dim)' : 'transparent',
+                    outline: activeMetric === m.key ? '1px solid var(--c-accent-border)' : '1px solid var(--c-bg-border)',
+                    color: activeMetric === m.key ? 'var(--c-tx-primary)' : 'var(--c-tx-muted)',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  {m.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <p className="label-caps" style={{ marginBottom: 8, opacity: 0.6 }}>History Length</p>
+            <div style={{ display: 'flex', gap: 6 }}>
+              {TIME_RANGES.map(r => (
+                <button
+                  key={r.value}
+                  onClick={() => setTimeRange(r.value)}
+                  style={{
+                    padding: '6px 14px',
+                    borderRadius: 8,
+                    fontSize: 12,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    border: 'none',
+                    background: timeRange === r.value ? 'var(--c-accent-dim)' : 'transparent',
+                    outline: timeRange === r.value ? '1px solid var(--c-accent-border)' : '1px solid var(--c-bg-border)',
+                    color: timeRange === r.value ? 'var(--c-tx-primary)' : 'var(--c-tx-muted)',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  {r.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {showSettings && (
@@ -895,52 +901,58 @@ function AlertsTab({ alerts, loading }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-      <div className="surface" style={{ padding: '12px 16px' }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}>
-          <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-            <span className="label-caps">Severity</span>
-            {['all', 'critical', 'watch'].map((s) => (
-              <button
-                key={s}
-                onClick={() => setSeverityFilter(s)}
-                style={{
-                  padding: '4px 12px',
-                  borderRadius: 6,
-                  fontSize: 11,
-                  fontWeight: 500,
-                  cursor: 'pointer',
-                  border: 'none',
-                  background: severityFilter === s ? 'var(--c-accent-dim)' : 'transparent',
-                  outline: severityFilter === s ? '1px solid var(--c-accent-border)' : '1px solid var(--c-bg-border)',
-                  color: severityFilter === s ? 'var(--c-tx-primary)' : 'var(--c-tx-muted)',
-                }}
-              >
-                {s.charAt(0).toUpperCase() + s.slice(1)}
-              </button>
-            ))}
+      <div className="surface" style={{ padding: '14px 20px' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            <span className="label-caps" style={{ opacity: 0.6, fontSize: 11 }}>Severity</span>
+            <div style={{ display: 'flex', gap: 4 }}>
+              {['all', 'critical', 'watch'].map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setSeverityFilter(s)}
+                  style={{
+                    padding: '6px 16px',
+                    borderRadius: 8,
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    border: 'none',
+                    background: severityFilter === s ? 'var(--c-accent-dim)' : 'transparent',
+                    outline: severityFilter === s ? '1px solid var(--c-accent-border)' : '1px solid var(--c-bg-border)',
+                    color: severityFilter === s ? 'var(--c-tx-primary)' : 'var(--c-tx-muted)',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  {s.charAt(0).toUpperCase() + s.slice(1)}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-            <span className="label-caps">State</span>
-            {['all', 'active', 'resolved'].map((s) => (
-              <button
-                key={s}
-                onClick={() => setStatusFilter(s)}
-                style={{
-                  padding: '4px 12px',
-                  borderRadius: 6,
-                  fontSize: 11,
-                  fontWeight: 500,
-                  cursor: 'pointer',
-                  border: 'none',
-                  background: statusFilter === s ? 'var(--c-accent-dim)' : 'transparent',
-                  outline: statusFilter === s ? '1px solid var(--c-accent-border)' : '1px solid var(--c-bg-border)',
-                  color: statusFilter === s ? 'var(--c-tx-primary)' : 'var(--c-tx-muted)',
-                }}
-              >
-                {s.charAt(0).toUpperCase() + s.slice(1)}
-              </button>
-            ))}
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            <span className="label-caps" style={{ opacity: 0.6, fontSize: 11 }}>State</span>
+            <div style={{ display: 'flex', gap: 4 }}>
+              {['all', 'active', 'resolved'].map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setStatusFilter(s)}
+                  style={{
+                    padding: '6px 16px',
+                    borderRadius: 8,
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    border: 'none',
+                    background: statusFilter === s ? 'var(--c-accent-dim)' : 'transparent',
+                    outline: statusFilter === s ? '1px solid var(--c-accent-border)' : '1px solid var(--c-bg-border)',
+                    color: statusFilter === s ? 'var(--c-tx-primary)' : 'var(--c-tx-muted)',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  {s.charAt(0).toUpperCase() + s.slice(1)}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -954,42 +966,52 @@ function AlertsTab({ alerts, loading }) {
           {filteredAlerts.map((alert) => (
             <div
               key={alert.id}
-              className="surface p-5"
+              className="surface"
               style={{
-                borderColor: alert.severity === 'critical' ? 'rgba(196,100,91,0.28)' : 'rgba(214,163,92,0.28)',
+                padding: '24px 32px',
+                borderColor: alert.severity === 'critical' ? 'rgba(223,41,53,0.2)' : 'rgba(250,204,21,0.2)',
+                display: 'grid',
+                gridTemplateColumns: '1fr 340px',
+                gap: 60,
+                alignItems: 'center'
               }}
             >
-              <div className="flex items-start justify-between gap-4">
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap mb-2">
-                    <span
-                      className="label-caps text-[10px] px-2 py-1 rounded border"
-                      style={{
-                        borderColor: alert.severity === 'critical' ? 'rgba(196,100,91,0.4)' : 'rgba(214,163,92,0.4)',
-                      }}
-                    >
-                      {alert.severity}
-                    </span>
-                    <span className="label-caps text-[10px] px-2 py-1 rounded border border-bg-border">
-                      {alert.status}
-                    </span>
-                    <span className="label-caps text-[10px] px-2 py-1 rounded border border-bg-border">
-                      {alert.section}
-                    </span>
-                  </div>
+              <div className="min-w-0">
+                <p style={{ fontSize: 12, color: 'var(--c-tx-muted)', fontWeight: 600, marginBottom: 10, letterSpacing: '0.02em' }}>
+                  {alert.timestamp ? new Date(alert.timestamp).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '—'}
+                </p>
+                <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--c-tx-primary)', lineHeight: 1.5 }}>{alert.message}</p>
+                {alert.recommended_action && (
+                  <p style={{ fontSize: 13, color: 'var(--c-tx-secondary)', marginTop: 12, lineHeight: 1.5 }}>
+                    {alert.recommended_action}
+                  </p>
+                )}
+              </div>
 
-                  <p className="text-sm font-medium text-tx-primary">{alert.message}</p>
-
-                  <div className="mt-2 text-xs text-tx-secondary space-y-1">
-                    <p>
-                      {alert.parameter} • {alert.value} • {alert.band}
-                    </p>
-                    <p>{alert.timestamp ? new Date(alert.timestamp).toLocaleString('en-GB') : '—'}</p>
-                  </div>
-
-                  {alert.recommended_action && (
-                    <p className="text-xs text-tx-muted mt-3">{alert.recommended_action}</p>
-                  )}
+              <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 20 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-end' }}>
+                  <span 
+                    className="label-caps text-[10px] px-3 py-1 rounded-full"
+                    style={{
+                      background: alert.section === 'controlled' ? 'rgba(250,204,21,0.12)' : 'rgba(139,92,246,0.12)',
+                      color: alert.section === 'controlled' ? '#FACC15' : '#A78BFA',
+                      border: `1px solid ${alert.section === 'controlled' ? 'rgba(250,204,21,0.4)' : 'rgba(139,92,246,0.4)'}`,
+                      fontWeight: 800
+                    }}
+                  >
+                    {alert.section}
+                  </span>
+                  <span
+                    className="label-caps text-[10px] px-3 py-1 rounded-full"
+                    style={{
+                      background: alert.severity === 'critical' ? 'rgba(223,41,53,0.18)' : 'rgba(56,189,248,0.18)',
+                      color: alert.severity === 'critical' ? '#FF8E8E' : '#38BDF8',
+                      border: `1px solid ${alert.severity === 'critical' ? 'rgba(223,41,53,0.4)' : 'rgba(56,189,248,0.4)'}`,
+                      fontWeight: 800
+                    }}
+                  >
+                    {alert.severity}
+                  </span>
                 </div>
               </div>
             </div>

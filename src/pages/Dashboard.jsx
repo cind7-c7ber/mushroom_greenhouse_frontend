@@ -13,17 +13,17 @@ function StageSwitcher({ current, onRequest }) {
   const stages = Object.values(STAGES)
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-      <span className="label-caps" style={{ marginRight: 6 }}>Stage</span>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+      <span className="label-caps" style={{ marginRight: 6, fontSize: 13, fontWeight: 800 }}>Stage</span>
       {stages.map((s) => (
         <button
           key={s.key}
           onClick={() => s.key !== current && onRequest(s.key)}
           style={{
-            padding: '5px 14px',
-            borderRadius: 8,
-            fontSize: 12,
-            fontWeight: 500,
+            padding: '7px 18px',
+            borderRadius: 10,
+            fontSize: 15,
+            fontWeight: 600,
             cursor: 'pointer',
             border: 'none',
             background: s.key === current ? 'var(--c-accent-dim)' : 'transparent',
@@ -159,7 +159,7 @@ export default function Dashboard() {
       <div className="page-content" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
           <StageSwitcher current={settings.growthStage} onRequest={setPendingStage} />
-          <p style={{ fontSize: 12, color: 'var(--c-tx-muted)' }}>
+          <p style={{ fontSize: 15, color: 'var(--c-tx-muted)', fontWeight: 500 }}>
             {STAGES[settings.growthStage]?.description}
           </p>
         </div>
@@ -187,50 +187,54 @@ export default function Dashboard() {
         )}
 
         <section>
-          <p className="label-caps mb-4 text-[11px] opacity-80">CURRENT READINGS</p>
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
-            <SensorPanel section="controlled" data={controlled} loading={loading} prevData={prevControlled} />
-            <SensorPanel section="control" data={control} loading={loading} prevData={prevControl} />
+            <SensorPanel 
+              title="Current Readings" 
+              section="controlled" 
+              data={controlled} 
+              loading={loading} 
+              prevData={prevControlled} 
+            />
+            <SensorPanel 
+              section="control" 
+              data={control} 
+              loading={loading} 
+              prevData={prevControl} 
+            />
           </div>
         </section>
 
         <section>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-xl font-bold text-tx-primary">Visual Monitoring</h2>
-              <p className="text-sm text-tx-muted mt-1">Growth documentation and live camera feed</p>
-            </div>
-            {capturedAt && (
-              <div className="text-right">
-                <p className="label-caps text-[10px] opacity-60">CAPTURED</p>
-                <p className="text-xs font-bold text-tx-secondary mt-0.5">{capturedAt}</p>
-              </div>
-            )}
-          </div>
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 min-h-[400px]">
-            <LatestImagePanel imageData={imageData} loading={loading} />
-            <LiveStreamPanel />
-          </div>
-        </section>
-
-        <section>
-          <div className="flex items-center justify-between mb-4">
-            <p className="label-caps text-[11px] opacity-80">TREND PREVIEW</p>
-            <Link
-              to="/history?tab=trends"
-              className="text-xs font-bold"
-              style={{ color: 'var(--c-accent-light)', textDecoration: 'underline', textUnderlineOffset: 4 }}
-            >
-              Open full history
-            </Link>
-          </div>
-
           <ComparisonCharts
+            title="Environmental Trends"
             historyControlled={historyControlled}
             historyControl={historyControl}
             loading={loading}
             compact
+            headerAction={
+              <Link
+                to="/history?tab=trends"
+                className="text-xs font-bold"
+                style={{ color: 'var(--c-tx-muted)', textUnderlineOffset: 4 }}
+              >
+                View Historical Trend →
+              </Link>
+            }
           />
+        </section>
+
+
+        <section>
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 min-h-[400px]">
+            <LatestImagePanel 
+              title="Visual Monitoring"
+              subtitle="Growth documentation and live camera feed"
+              capturedAt={capturedAt}
+              imageData={imageData} 
+              loading={loading} 
+            />
+            <LiveStreamPanel />
+          </div>
         </section>
       </div>
     </>

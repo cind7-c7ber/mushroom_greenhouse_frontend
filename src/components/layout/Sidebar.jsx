@@ -51,23 +51,6 @@ const USER_NAV = [
       </svg>
     ),
   },
-  {
-    path: '/settings',
-    exact: false,
-    label: 'Settings',
-    description: 'Preferences',
-    icon: (
-      <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-        <path d="M7.5 9.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" stroke="currentColor" strokeWidth="1.3" />
-        <path
-          d="M7.5 1.5v1M7.5 12.5v1M1.5 7.5h1M12.5 7.5h1M3.4 3.4l.7.7M10.9 10.9l.7.7M3.4 11.6l.7-.7M10.9 4.1l.7-.7"
-          stroke="currentColor"
-          strokeWidth="1.3"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-  },
 ]
 
 const ADMIN_ONLY_NAV = [
@@ -80,6 +63,23 @@ const ADMIN_ONLY_NAV = [
       <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
         <rect x="1" y="3" width="13" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
         <path d="M5 7.5h5M7.5 5v5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+      </svg>
+    ),
+  },
+  {
+    path: '/settings',
+    exact: false,
+    label: 'Settings',
+    description: 'System preferences',
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+        <path d="M7.5 9.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" stroke="currentColor" strokeWidth="1.3" />
+        <path
+          d="M7.5 1.5v1M7.5 12.5v1M1.5 7.5h1M12.5 7.5h1M3.4 3.4l.7.7M10.9 10.9l.7.7M3.4 11.6l.7-.7M10.9 4.1l.7-.7"
+          stroke="currentColor"
+          strokeWidth="1.3"
+          strokeLinecap="round"
+        />
       </svg>
     ),
   },
@@ -198,52 +198,54 @@ export default function Sidebar({ mobileOpen, onClose }) {
         </p>
       </div>
 
-      <div style={{ padding: '12px 20px', borderBottom: isAdminPage ? '1px solid rgba(165,124,201,0.14)' : '1px solid var(--c-bg-border)' }}>
-        <p
-          style={{
-            fontSize: 10,
-            fontWeight: 600,
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
-            color: 'var(--c-tx-muted)',
-            marginBottom: 6,
-          }}
-        >
-          Active Stage
-        </p>
-        <NavLink to="/settings" style={{ textDecoration: 'none' }}>
-          <div
+      {isAdmin && (
+        <div style={{ padding: '12px 20px', borderBottom: isAdminPage ? '1px solid rgba(165,124,201,0.14)' : '1px solid var(--c-bg-border)' }}>
+          <p
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              padding: '6px 10px',
-              borderRadius: 8,
-              background: isAdminPage ? 'rgba(165,124,201,0.10)' : 'var(--c-accent-dim)',
-              border: isAdminPage ? '1px solid rgba(165,124,201,0.20)' : '1px solid var(--c-accent-border)',
-              cursor: 'pointer',
+              fontSize: 10,
+              fontWeight: 600,
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+              color: 'var(--c-tx-muted)',
+              marginBottom: 6,
             }}
           >
-            <span
+            Active Stage
+          </p>
+          <NavLink to="/settings" style={{ textDecoration: 'none' }}>
+            <div
               style={{
-                width: 6,
-                height: 6,
-                borderRadius: '50%',
-                background: isAdminPage ? '#A57CC9' : 'var(--c-accent)',
-                flexShrink: 0,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '6px 10px',
+                borderRadius: 8,
+                background: isAdminPage ? 'rgba(165,124,201,0.10)' : 'var(--c-accent-dim)',
+                border: isAdminPage ? '1px solid rgba(165,124,201,0.20)' : '1px solid var(--c-accent-border)',
+                cursor: 'pointer',
               }}
-            />
-            <div>
-              <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--c-tx-primary)', lineHeight: 1.2 }}>
-                {stage?.label ?? '—'}
-              </p>
-              <p style={{ fontSize: 10, color: 'var(--c-tx-muted)', lineHeight: 1.2 }}>
-                Change in Settings
-              </p>
+            >
+              <span
+                style={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: '50%',
+                  background: isAdminPage ? '#A57CC9' : 'var(--c-accent)',
+                  flexShrink: 0,
+                }}
+              />
+              <div>
+                <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--c-tx-primary)', lineHeight: 1.2 }}>
+                  {stage?.label ?? '—'}
+                </p>
+                <p style={{ fontSize: 10, color: 'var(--c-tx-muted)', lineHeight: 1.2 }}>
+                  Change in Settings
+                </p>
+              </div>
             </div>
-          </div>
-        </NavLink>
-      </div>
+          </NavLink>
+        </div>
+      )}
 
       <nav style={{ flex: 1, padding: '12px 12px', overflowY: 'auto' }}>
         <p

@@ -14,7 +14,7 @@ function EmptyState({ message, detail }) {
   )
 }
 
-export default function LatestImagePanel({ imageData, loading }) {
+export default function LatestImagePanel({ imageData, loading, title, subtitle, capturedAt }) {
   const [imgError, setImgError] = useState(false)
   const [imgLoaded, setImgLoaded] = useState(false)
 
@@ -33,10 +33,25 @@ export default function LatestImagePanel({ imageData, loading }) {
   const uploadStatus = imageData?.upload_status ?? null
 
   return (
-    <div className="surface p-5 flex flex-col h-full">
+    <div className="surface p-6 flex flex-col h-full">
+      {(title || subtitle || capturedAt) && (
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            {title && <h2 className="text-xl font-bold text-tx-primary">{title}</h2>}
+            {subtitle && <p className="text-sm text-tx-muted mt-1">{subtitle}</p>}
+          </div>
+          {capturedAt && (
+            <div className="text-right">
+              <p className="label-caps text-[10px] opacity-60">CAPTURED</p>
+              <p className="text-xs font-bold text-tx-secondary mt-0.5">{capturedAt}</p>
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="section-heading">LATEST IMAGE</h3>
+          <h3 className="section-heading text-[11px] opacity-80">LATEST SNAPSHOT</h3>
         </div>
         {filename && (
           <span className="text-[11px] font-mono text-tx-muted truncate max-w-[200px]">

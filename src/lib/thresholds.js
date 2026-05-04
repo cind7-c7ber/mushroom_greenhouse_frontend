@@ -84,11 +84,11 @@ export function getMetricStatus(metric, value, stage) {
 }
 
 export const STATUS_META = {
-  optimal:       { label: 'Optimal',      color: '#4FA99A', bg: 'rgba(79,169,154,0.12)',  border: 'rgba(79,169,154,0.3)'  },
-  watch:         { label: 'Watch',        color: '#C4A85B', bg: 'rgba(196,168,91,0.12)',  border: 'rgba(196,168,91,0.3)'  },
-  danger:        { label: 'Danger',       color: '#C4645B', bg: 'rgba(196,100,91,0.12)',  border: 'rgba(196,100,91,0.3)'  },
-  uncalibrated:  { label: 'Calibrating', color: '#8AADAF', bg: 'rgba(138,173,175,0.1)',  border: 'rgba(138,173,175,0.2)' },
-  unknown:       { label: '—',            color: '#5E7275', bg: 'transparent',             border: 'transparent'           },
+  optimal:       { label: 'Optimal',      color: '#81C784', bg: 'rgba(129,199,132,0.12)', border: 'rgba(129,199,132,0.3)' },
+  watch:         { label: 'Monitor',      color: '#38BDF8', bg: 'rgba(56,189,248,0.12)',  border: 'rgba(56,189,248,0.3)'  },
+  danger:        { label: 'Needs Action', color: '#F87171', bg: 'rgba(248,113,113,0.12)',  border: 'rgba(248,113,113,0.3)'  },
+  uncalibrated:  { label: 'Calibrating', color: '#81C784', bg: 'rgba(129,199,132,0.12)',  border: 'rgba(129,199,132,0.3)' },
+  unknown:       { label: '—',            color: '#64748B', bg: 'transparent',             border: 'transparent'           },
 }
 
 /**

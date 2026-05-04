@@ -137,41 +137,21 @@ export default function AppShell() {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-            {syncHealth?.status && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                <span
-                  style={{
-                    width: 6,
-                    height: 6,
-                    borderRadius: '50%',
-                    background:
-                      syncHealth.status === 'healthy'
-                        ? 'var(--c-online)'
-                        : syncHealth.status === 'unreachable'
-                        ? '#C4645B'
-                        : 'var(--c-accent)',
-                    display: 'inline-block',
-                  }}
-                />
-                <span style={{ fontSize: 11, color: 'var(--c-tx-muted)' }}>
-                  Sync: {syncHealth.status}
-                </span>
-              </div>
-            )}
 
             {meta.refreshLabel && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span
                   style={{
-                    width: 6,
-                    height: 6,
+                    width: 8,
+                    height: 8,
                     borderRadius: '50%',
                     background: 'var(--c-accent)',
                     display: 'inline-block',
                     animation: 'pulse 2s infinite',
+                    boxShadow: '0 0 8px var(--c-accent)'
                   }}
                 />
-                <span style={{ fontSize: 11, color: 'var(--c-tx-muted)' }}>{meta.refreshLabel}</span>
+                <span style={{ fontSize: 12, color: 'var(--c-tx-secondary)', fontWeight: 600 }}>{meta.refreshLabel}</span>
               </div>
             )}
 
@@ -179,45 +159,22 @@ export default function AppShell() {
               <div key={lastUpdated.getTime()} style={{ textAlign: 'right', animation: 'fadeIn 0.4s ease-out' }}>
                 <p
                   style={{
-                    fontSize: 10,
+                    fontSize: 9,
                     color: 'var(--c-tx-muted)',
                     textTransform: 'uppercase',
-                    letterSpacing: '0.1em',
+                    letterSpacing: '0.12em',
+                    fontWeight: 800,
+                    marginBottom: 2
                   }}
                 >
-                  Updated
+                  Last Sync
                 </p>
-                <p style={{ fontSize: 11, fontFamily: 'JetBrains Mono, monospace', color: 'var(--c-tx-secondary)' }}>
+                <p style={{ fontSize: 15, fontFamily: 'JetBrains Mono, monospace', color: 'var(--c-tx-primary)', fontWeight: 800 }}>
                   {lastUpdated.toLocaleTimeString('en-GB')}
                 </p>
               </div>
             )}
 
-            {user && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ textAlign: 'right' }}>
-                  <p style={{ fontSize: 11, color: 'var(--c-tx-primary)', fontWeight: 500 }}>
-                    {user.username}
-                  </p>
-                  <p
-                    style={{
-                      fontSize: 10,
-                      color: isAdminPage ? '#A57CC9' : 'var(--c-tx-muted)',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    {user.role}
-                  </p>
-                </div>
-                <button
-                  onClick={logout}
-                  className="btn-ghost"
-                  style={{ padding: '7px 12px', fontSize: 12 }}
-                >
-                  Logout
-                </button>
-              </div>
-            )}
           </div>
         </header>
 

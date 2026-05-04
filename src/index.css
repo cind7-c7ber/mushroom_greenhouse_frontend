@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,16 +7,20 @@
 /* ─── Theme: CSS Variables ────────────────────────────────────────────────── */
 :root,
 [data-theme="dark"] {
-  --c-bg-base:      #1C192A;
-  --c-bg-surface:   #27233A;
-  --c-bg-elevated:  #2E2942;
-  --c-bg-card:      #332E4A;
-  --c-bg-border:    #3E3859;
-  --c-bg-hover:     #3A344F;
+  --font-sans:    'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Outfit', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
 
-  --c-tx-primary:   #E5EFF0;
-  --c-tx-secondary: #B8CCCE;   /* brighter than before */
-  --c-tx-muted:     #8AADAF;   /* brighter than before */
+  --c-bg-base:      #0F172A;   /* Deeper, more modern slate blue */
+  --c-bg-surface:   #1E293B;
+  --c-bg-elevated:  #334155;
+  --c-bg-card:      #1E293B;
+  --c-bg-border:    rgba(255,255,255,0.08);
+  --c-bg-hover:     #334155;
+
+  --c-tx-primary:   #F8FAFC;   /* Max contrast white */
+  --c-tx-secondary: #E2E8F0;   /* Brighter secondary */
+  --c-tx-muted:     #94A3B8;   /* Visible muted text */
   --c-tx-accent:    #C4A8DA;
 
   --c-accent:       #9A75B0;
@@ -58,9 +64,9 @@
   body {
     background-color: var(--c-bg-base);
     color: var(--c-tx-primary);
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: var(--font-sans);
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.6;
     transition: background-color 0.2s, color 0.2s;
   }
 
@@ -76,9 +82,9 @@
   .surface-elevated { background: var(--c-bg-elevated); border: 1px solid var(--c-bg-border); @apply rounded-xl; }
 
   /* Typography */
-  .label-caps      { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-tx-muted); }
-  .label-secondary { font-size: 12px; font-weight: 500; letter-spacing: 0.04em; color: var(--c-tx-secondary); }
-  .section-heading { font-size: 14px; font-weight: 600; color: var(--c-tx-primary); letter-spacing: -0.01em; }
+  .label-caps      { font-family: var(--font-display); font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-tx-muted); }
+  .label-secondary { font-family: var(--font-display); font-size: 12px; font-weight: 600; letter-spacing: 0.02em; color: var(--c-tx-secondary); }
+  .section-heading { font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--c-tx-primary); letter-spacing: -0.01em; }
 
   /* Dividers */
   .divider { border-top: 1px solid var(--c-bg-border); }
@@ -107,8 +113,9 @@
   .page-content   { @apply px-6 py-6 max-w-screen-xl mx-auto; }
 
   /* Metric display */
-  .metric-value   { font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; line-height: 1; color: var(--c-tx-primary); }
-  .metric-unit    { font-size: 12px; font-weight: 400; color: var(--c-tx-muted); margin-left: 3px; }
+  /* Metric display */
+  .metric-value   { font-family: var(--font-display); font-size: 28px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; color: var(--c-tx-primary); }
+  .metric-unit    { font-family: var(--font-display); font-size: 12px; font-weight: 500; color: var(--c-tx-muted); margin-left: 4px; text-transform: uppercase; }
 
   /* Buttons */
   .btn-primary {
