@@ -66,23 +66,6 @@ const ADMIN_ONLY_NAV = [
       </svg>
     ),
   },
-  {
-    path: '/settings',
-    exact: false,
-    label: 'Settings',
-    description: 'System preferences',
-    icon: (
-      <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-        <path d="M7.5 9.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" stroke="currentColor" strokeWidth="1.3" />
-        <path
-          d="M7.5 1.5v1M7.5 12.5v1M1.5 7.5h1M12.5 7.5h1M3.4 3.4l.7.7M10.9 10.9l.7.7M3.4 11.6l.7-.7M10.9 4.1l.7-.7"
-          stroke="currentColor"
-          strokeWidth="1.3"
-          strokeLinecap="round"
-        />
-      </svg>
-    ),
-  },
 ]
 
 function ThemeToggle() {
@@ -166,11 +149,11 @@ export default function Sidebar({ mobileOpen, onClose }) {
         display: 'flex',
         flexDirection: 'column',
         background: isAdminPage
-          ? 'linear-gradient(180deg, rgba(35,27,47,0.98), rgba(25,20,36,0.98))'
-          : 'var(--c-bg-surface)',
+          ? 'var(--c-bg-sidebar-admin)'
+          : 'var(--c-bg-sidebar)',
         borderRight: isAdminPage
-          ? '1px solid rgba(165,124,201,0.18)'
-          : '1px solid var(--c-bg-border)',
+          ? '1px solid var(--c-border-sidebar-admin)'
+          : '1px solid var(--c-border-sidebar)',
         zIndex: 40,
         transform: mobileOpen ? 'translateX(0)' : undefined,
         transition: 'transform 0.25s ease',
@@ -237,9 +220,6 @@ export default function Sidebar({ mobileOpen, onClose }) {
               <div>
                 <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--c-tx-primary)', lineHeight: 1.2 }}>
                   {stage?.label ?? '—'}
-                </p>
-                <p style={{ fontSize: 10, color: 'var(--c-tx-muted)', lineHeight: 1.2 }}>
-                  Change in Settings
                 </p>
               </div>
             </div>

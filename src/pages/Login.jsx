@@ -21,8 +21,9 @@ export default function Login() {
     setLoading(true)
 
     try {
-      await login(form.username.trim(), form.password)
-      navigate(redirectTo, { replace: true })
+      const user = await login(form.username.trim(), form.password)
+      const target = user?.role === 'admin' ? '/admin' : redirectTo
+      navigate(target, { replace: true })
     } catch (err) {
       if (err.code === 'ECONNABORTED') {
         setError('The server is waking up. Please wait a moment and try again.')

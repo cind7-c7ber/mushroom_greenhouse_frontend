@@ -5,7 +5,7 @@ const baseURL =
 
 const client = axios.create({
   baseURL,
-  timeout: 50000,
+  timeout: 60000,
 })
 
 client.interceptors.request.use((config) => {

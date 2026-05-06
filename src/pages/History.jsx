@@ -108,11 +108,11 @@ function ComparisonMatrix({ histCtrl, histPlain, stage }) {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 0.6fr 1fr', gap: 20, borderBottom: '1px solid var(--c-bg-border)', paddingBottom: 12, marginBottom: 12 }}>
+      <div className="matrix-row matrix-header" style={{ borderBottom: '1px solid var(--c-bg-border)', paddingBottom: 12, marginBottom: 12 }}>
         <p className="label-caps" style={{ opacity: 0.6 }}>Metric</p>
-        <p className="label-caps" style={{ color: CONTROLLED_COLOR }}>Controlled Section</p>
-        <p className="label-caps" style={{ textAlign: 'center', opacity: 0.6 }}>Difference</p>
-        <p className="label-caps" style={{ color: CONTROL_COLOR }}>Control Section</p>
+        <p className="label-caps controlled-col" style={{ color: CONTROLLED_COLOR }}>Controlled Section</p>
+        <p className="label-caps delta-col" style={{ textAlign: 'center', opacity: 0.6 }}>Difference</p>
+        <p className="label-caps control-col" style={{ color: CONTROL_COLOR }}>Control Section</p>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -125,10 +125,7 @@ function ComparisonMatrix({ histCtrl, histPlain, stage }) {
           const deltaColor = delta > 0 ? '#5DB075' : delta < 0 ? '#DF2935' : 'var(--c-tx-muted)'
 
           return (
-            <div key={key} style={{ 
-              display: 'grid', 
-              gridTemplateColumns: '1.2fr 1fr 0.6fr 1fr', 
-              gap: 20, 
+            <div key={key} className="matrix-row" style={{ 
               alignItems: 'center',
               padding: '16px 0',
               borderBottom: '1px solid var(--c-bg-border)',
@@ -191,6 +188,28 @@ function ComparisonMatrix({ histCtrl, histPlain, stage }) {
           across all parameters compared to the control section.
         </p>
       </div>
+
+      <style>{`
+        .matrix-row {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+        @media (min-width: 768px) {
+          .matrix-row {
+            grid-template-columns: 1.2fr 1fr 0.6fr 1fr;
+            gap: 20px;
+          }
+        }
+        @media (max-width: 767px) {
+          .matrix-header { display: none; }
+          .matrix-row { padding: 20px 0 !important; }
+          .controlled-col::before { content: 'Controlled: '; opacity: 0.5; font-size: 9px; }
+          .control-col::before { content: 'Control: '; opacity: 0.5; font-size: 9px; }
+          .delta-col { text-align: left !important; }
+          .delta-col::before { content: 'Delta: '; opacity: 0.5; font-size: 9px; }
+        }
+      `}</style>
     </div>
   )
 }

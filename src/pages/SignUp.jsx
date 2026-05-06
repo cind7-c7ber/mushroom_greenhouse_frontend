@@ -12,6 +12,7 @@ export default function SignUp() {
     email: '',
     password: '',
     confirm: '',
+    role: 'user',
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -39,9 +40,10 @@ export default function SignUp() {
         username: form.username.trim(),
         email: form.email.trim(),
         password: form.password,
-        role: 'user',
+        role: form.role,
       })
-      navigate('/', { replace: true })
+      const target = form.role === 'admin' ? '/admin' : '/'
+      navigate(target, { replace: true })
     } catch (err) {
       if (err.code === 'ECONNABORTED') {
         setError('The server is waking up. Please wait a moment and try again.')
@@ -203,6 +205,31 @@ export default function SignUp() {
                   </svg>
                 )}
               </button>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-bold ml-1" style={{ color: '#000000' }}>
+              Account Role
+            </label>
+            <div className="relative">
+              <select
+                className="w-full rounded-2xl px-5 py-4 outline-none transition-all focus:ring-2 focus:ring-black/10 appearance-none cursor-pointer"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  border: '1px solid rgba(0, 0, 0, 0.15)',
+                  color: '#000000',
+                }}
+                value={form.role}
+                onChange={(e) => setForm((p) => ({ ...p, role: e.target.value }))}
+              >
+                <option value="user">Standard Operator</option>
+                <option value="admin">System Administrator</option>
+              </select>
+              <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-60">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-black">
+                  <polyline points="6 9 12 15 18 9"/>
+                </svg>
+              </div>
             </div>
           </div>
 

@@ -117,6 +117,32 @@ function ToneBadge({ children, tone = 'default' }) {
   )
 }
 
+function humanizeError(error) {
+  if (!error) return '—'
+  const err = error.toString().toLowerCase()
+  
+  if (err.includes('ssl verification failed') || err.includes('sslerror')) {
+    return 'SSL Verification Failed (Check Certificate)'
+  }
+  if (err.includes('connectionpool') || err.includes('max retries exceeded') || err.includes('connection refused')) {
+    return 'Source Unreachable (Connection Refused)'
+  }
+  if (err.includes('timeout')) {
+    return 'Connection Timed Out'
+  }
+  if (err.includes('404')) {
+    return 'Telemetry Endpoint Not Found'
+  }
+  if (err.includes('401') || err.includes('403')) {
+    return 'Authentication Required (Check Credentials)'
+  }
+  if (err.includes('unexpected_eof')) {
+    return 'Network Interruption (Incomplete Data)'
+  }
+  
+  return error.length > 60 ? error.substring(0, 57) + '...' : error
+}
+
 export default function Admin() {
   const { user } = useAuth()
   const { status, syncHealth, alertSummary, lastUpdated, activeAlerts } = useData()
@@ -237,7 +263,7 @@ export default function Admin() {
           <KV label="Source URL" value={syncHealth?.source_url} />
           <KV label="Last Success" value={syncHealth?.last_successful_sync} />
           <KV label="Last Failure" value={syncHealth?.last_failed_sync} />
-          <KV label="Last Error" value={syncHealth?.last_error} />
+          <KV label="Last Error" value={humanizeError(syncHealth?.last_error)} />
         </Panel>
 
         <Panel

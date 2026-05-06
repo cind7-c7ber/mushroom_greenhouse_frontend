@@ -129,7 +129,7 @@ export default function SensorPanel({ section, data, loading, prevData, title })
       className="surface"
       style={{
         borderRadius: 20,
-        padding: '32px',
+        padding: 'var(--panel-padding, 32px)',
         background: 'var(--c-bg-surface)',
         border: '1px solid var(--c-bg-border)',
         boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
@@ -173,15 +173,13 @@ export default function SensorPanel({ section, data, loading, prevData, title })
 
       <div style={{ borderTop: '2px solid var(--c-bg-border)', paddingTop: 28 }}>
         {loading ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+          <div className="responsive-grid">
             {METRICS.map((m) => (
               <SkeletonCard key={m} />
             ))}
           </div>
         ) : data ? (
-          <div
-            style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}
-          >
+          <div className="responsive-grid">
             {METRICS.map((m) => (
               <MetricCard key={m} metric={m} value={data[m]} status={metricStatuses[m]} prevValue={prevData?.[m]} />
             ))}
@@ -229,11 +227,18 @@ export default function SensorPanel({ section, data, loading, prevData, title })
                 hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit',
+                suffix: false
               })}
             </span>
           </div>
         )}
       </div>
+
+      <style>{`
+        @media (max-width: 640px) {
+          .surface { --panel-padding: 18px !important; }
+        }
+      `}</style>
     </div>
   )
 }

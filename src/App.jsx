@@ -59,6 +59,17 @@ function AuthEventBridge() {
   return null
 }
 
+function RequireOperator({ children }) {
+  const { user, loading } = useAuth()
+  const location = useLocation()
+
+  if (loading) return <PageLoader />
+  if (!user) return <Navigate to="/signup" state={{ from: location }} replace />
+  if (user.role === 'admin') return <Navigate to="/admin" replace />
+
+  return children
+}
+
 function RequireAuth({ children }) {
   const { user, loading } = useAuth()
   const location = useLocation()
@@ -138,9 +149,9 @@ function AppRoutes() {
 
       <Route
         element={
-          <RequireAuth>
+          <RequireOperator>
             <AppShell />
-          </RequireAuth>
+          </RequireOperator>
         }
       >
         <Route
